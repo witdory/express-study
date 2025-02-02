@@ -23,7 +23,8 @@ new MongoClient(url).connect().then((client)=>{
 
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  // res.sendFile(__dirname + '/index.html');
+  res.redirect('/list')
 }) 
 
 app.get('/news', (req, res) => {
@@ -85,4 +86,43 @@ app.get('/detail/:id', async (req, res)=>{
     res.status(500).send('url 오류')
   }
 
+})
+
+
+app.get('/edit/:id', async (req, res)=>{
+  try{
+
+   let result = await db.collection('post').findOne({ _id : new ObjectId(req.params.id)})
+   if(result == null){
+     res.send('url 입력 오류')
+   }
+   else{
+     console.log(result)
+     res.render('edit.ejs',{post:result})
+   }
+   
+ }
+ catch(e){
+   console.log(e)
+   res.status(500).send('url 오류')
+ }
+
+})
+
+app.post('/edit/:id', async (req, res)=>{
+  console.log(req.body)
+
+  try{
+    if(req.body.title == ''){
+      res.send('제목을 입력하세요')
+    }
+    else{
+      await db.collection('post').updateOne({_id : new ObjectId(req.params.id)}, {$set:{title : req.body.title, content: req.body.content}})
+      res.redirect('/detail/'+ req.params.id)
+    }
+  }
+  catch(e){
+    console.log(e)
+    res.status(500).send('서버 에러 발생')
+  }
 })
