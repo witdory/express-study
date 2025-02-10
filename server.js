@@ -1,12 +1,17 @@
+// server.js
 const express = require('express')
 const app = express()
+const { MongoClient, ObjectId } = require('mongodb')
+const methodOverride = require('method-override')
+
 require("dotenv").config()
 const url = process.env.DB_URL
+
+
 app.use(express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
-const { MongoClient, ObjectId } = require('mongodb')
 
 let db
 new MongoClient(url).connect().then((client)=>{
@@ -125,4 +130,12 @@ app.post('/edit/:id', async (req, res)=>{
     console.log(e)
     res.status(500).send('서버 에러 발생')
   }
+})
+
+
+app.delete('/api/posts', async (req, res)=> {
+  console.log(req.query)
+  await db.collection('post').deleteOne({_id:new ObjectId(req.query.postid)})
+  .then(result => console.log('삭제됨', result));
+  res.send('삭제완료')
 })
