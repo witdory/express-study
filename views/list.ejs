@@ -25,6 +25,11 @@
 
         <% } %>
     </div> 
+    <% if (posts && posts.length > 0 && posts[posts.length - 1]) { %>
+        <a href="/api/list/next/<%= posts[posts.length-1]._id %>">다음</a>
+      <% } %>
+      
+
     <script>
         
         document.querySelectorAll('.delete').forEach((button)=>{
@@ -32,8 +37,13 @@
                 fetch('/api/posts?postid=' + e.currentTarget.dataset.id, {
                     method : 'DELETE',
                 })
+                .then((r)=>r.text())
+                .then((r)=>{
+                    e.target.parentElement.parentElement.style.display = 'none'
+                })
             })
         })
+        
         
 
     </script>

@@ -13,6 +13,27 @@ app.set('view engine', 'ejs')
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
+
+
+
+
+const session = require('express-session')
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+
+app.use(passport.initialize())
+app.use(session({
+  secret: '비번',
+  resave : false,
+  saveUninitialized : false
+}))
+
+app.use(passport.session()) 
+
+
+
+
+
 let db
 new MongoClient(url).connect().then((client)=>{
   console.log('DB연결성공')
@@ -139,3 +160,64 @@ app.delete('/api/posts', async (req, res)=> {
   .then(result => console.log('삭제됨', result));
   res.send('삭제완료')
 })
+
+
+
+
+app.get('/list/:page', async (req, res) => {
+  // 1번~5번 글을 찾아서 result에 저장
+
+  let result = await db.collection('post').find().skip((req.params.page-1)*5).limit(5).toArray()
+  
+  res.render('list.ejs', {posts: result})
+})  
+
+app.get('/api/list/next/:id', async (req, res) => {
+  // 1번~5번 글을 찾아서 result에 저장
+
+  let result = await db.collection('post')
+  .find({_id : {$gt : new ObjectId(req.params.id)}})
+  .limit(5).toArray()
+  
+  res.render('list.ejs', {posts: result})
+})  
+
+
+
+passport.use(new LocalStrategy(async (userId, userPassword, cb) => {
+  let result = await db.collection('user').findOne({ username : userId})
+  if (!result) {
+    return cb(null, false, { message: '아이디 DB에 없음' })
+  }
+  if (result.password == userPassword) {
+    return cb(null, result)
+  } else {
+    return cb(null, false, { message: '비번불일치' });
+  }
+}))
+
+passport.serializeUser((user, done) => {
+  process.nextTick(()=> {
+    done(null, 내용)
+  })
+})
+
+
+
+app.get('/login', async (req, res) => {
+
+  res.render('login.ejs')
+})  
+
+
+app.post('/login', async (req, res, next) => {
+  passport.authenticate('local', (error, user, info)=>{
+    if(error) return res.status(500).json(error)
+    if(!user) return res.status(401).json(info.message)
+    req.logIn(user, (err)=>{
+      if(err) return next(err)
+      res.redirect('/')
+    })
+  })(req, res, next)
+  
+})  
