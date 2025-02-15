@@ -3,6 +3,7 @@ const express = require('express')
 const app = express()
 const { MongoClient, ObjectId } = require('mongodb')
 const methodOverride = require('method-override')
+const bcrypt = require('bcrypt')
 
 require("dotenv").config()
 const url = process.env.DB_URL
@@ -20,12 +21,19 @@ app.use(express.urlencoded({extended:true}))
 const session = require('express-session')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
+const MongoStore = require('connect-mongo')
+
 
 app.use(passport.initialize())
 app.use(session({
   secret: '비번',
   resave : false,
-  saveUninitialized : false
+  saveUninitialized : false,
+  cookie : { maxAge : 7 * 24 * 60 * 60 * 1000},
+  store : MongoStore.create({
+    mongoUrl : process.env.DB_URL,
+    dbName : 'forum'
+  })
 }))
 
 app.use(passport.session()) 
@@ -66,9 +74,14 @@ app.get('/list', async (req, res) => {
 
 app.get('/write', async (req, res) => {
 
-  let result = await db.collection('post').find().toArray()
-  res.render('write.ejs', {posts: result})
-
+  // let result = await db.collection('post').find().toArray()
+  // res.render('write.ejs', {posts: result})
+  if(req.user){
+    res.render('write.ejs')
+  }
+  else{
+    res.redirect('/login')
+  }
 }) 
 
 
@@ -189,23 +202,32 @@ passport.use(new LocalStrategy(async (userId, userPassword, cb) => {
   if (!result) {
     return cb(null, false, { message: '아이디 DB에 없음' })
   }
-  if (result.password == userPassword) {
+  if (await bcrypt.compare(userPassword, result.password)) {
     return cb(null, result)
   } else {
-    return cb(null, false, { message: '비번불일치' });
+    return cb(null, false, { message: '비밀번호 불일치' });
   }
 }))
 
 passport.serializeUser((user, done) => {
+  console.log(user)
   process.nextTick(()=> {
-    done(null, 내용)
+    done(null, {id : user._id, username : user.username})
+  })
+})
+
+passport.deserializeUser(async (user, done) => {
+
+  let result = await db.collection('user').findOne({_id :  new ObjectId(user.id)})
+  delete result.password
+  process.nextTick(()=>{
+    done(null, result)
   })
 })
 
 
-
 app.get('/login', async (req, res) => {
-
+  console.log(req.user)
   res.render('login.ejs')
 })  
 
@@ -221,3 +243,44 @@ app.post('/login', async (req, res, next) => {
   })(req, res, next)
   
 })  
+
+
+app.get('/mypage', async (req, res) => {
+  console.log(req.user)
+  if(req.user){
+    res.render('mypage.ejs',{user: req.user})
+  } else{
+    res.redirect('/login')
+  }
+  
+})  
+
+app.get('/register',(req, res)=>{
+  res.render('register.ejs')
+})
+
+app.post('/register',async (req, res)=>{
+
+  const existId = await db.collection('user').findOne({username : req.body.username})
+
+  if(existId){
+    console.log('아이디 중복')
+    res.redirect('/register')
+  } 
+  else if(req.body.password != req.body.confirmpassword){
+    console.log('비밀번호 불일치')
+    res.redirect('/register')
+  }
+  else{
+    let hash = await bcrypt.hash(req.body.password,10)
+    // console.log(hash)
+    await db.collection('user').insertOne({
+      username: req.body.username,
+      password: hash
+    })
+    res.redirect('/list')
+  }
+
+
+  
+})
