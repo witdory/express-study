@@ -29,8 +29,10 @@
                 <a href="/detail/<%=posts[i]._id %>">
                     <%=posts[i].title%>
                 </a>
-                <a href="/edit/<%=posts[i]._id %>">✏️</a>
-                <span class="delete" data-id="<%=posts[i]._id%>">🗑️</span>
+                <% if (user && posts[i].user && posts[i].user.toString() == user._id.toString()) { %>
+                    <a href="/edit/<%=posts[i]._id %>">✏️</a>
+                    <span class="delete" data-id="<%=posts[i]._id%>">🗑️</span>
+                <% } %>
             </h4>
             <p><%=posts[i].content%></p>
         </div>

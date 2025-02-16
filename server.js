@@ -96,7 +96,9 @@ app.get('/news', (req, res) => {
 app.get('/list', async (req, res) => {
   let result = await db.collection('post').find().toArray()
   // console.log(result[0])
-  res.render('list.ejs', {posts: result})
+  res.render('list.ejs', {
+    posts: result,
+  user: req.user})
 }) 
 
 
@@ -126,11 +128,26 @@ app.post('/newpost', async (req, res)=>{
           res.send('제목을 입력하세요')
         }
         else{
-          await db.collection('post').insertOne({
-            title: req.body.title,
-            content: req.body.content,
-            img: req.file.location
-          })
+          if(req.file){
+            await db.collection('post').insertOne({
+              title: req.body.title,
+              content: req.body.content,
+              createdAt: new Date(),
+              img: req.file.location,
+              user: req.user._id,
+              username: req.user.username
+            })
+          }
+          else{
+            await db.collection('post').insertOne({
+              title: req.body.title,
+              content: req.body.content,
+              createdAt: new Date(),
+              user: req.user._id,
+              username: req.user.username
+            })
+          }
+          console.log('글 작성 성공')
           res.redirect('/list')
         }
       }
@@ -206,7 +223,10 @@ app.post('/edit/:id', async (req, res)=>{
 
 app.delete('/api/posts', async (req, res)=> {
   console.log(req.query)
-  await db.collection('post').deleteOne({_id:new ObjectId(req.query.postid)})
+  await db.collection('post').deleteOne({
+    _id:new ObjectId(req.query.postid),
+    user: new ObjectId(req.user._id)
+  })
   .then(result => console.log('삭제됨', result));
   res.send('삭제완료')
 })
@@ -222,7 +242,7 @@ app.get('/list/:page', async (req, res) => {
   res.render('list.ejs', {posts: result})
 })  
 
-app.get('/api/list/next/:id', async (req, res) => {
+app.get('/list/next/:id', async (req, res) => {
   // 1번~5번 글을 찾아서 result에 저장
 
   let result = await db.collection('post')
@@ -321,9 +341,21 @@ app.use('/shop', require('./routes/shop.js'))
 
 app.use('/board', require('./routes/board.js'))
 
-app.get('/search',async (req, res)=>{
+app.get('/search', async (req, res)=>{
   console.log(req.query.val)
+  let searchCondition = [
+    {$search : {
+      index : 'title_index',
+      text : { query : req.query.val, path : 'title' }
+    }},
+    {$sort : {createdAt : 1}},
+    {$limit : 3}
+    
+  ] 
 
-  let result = await db.collection('post').find({$text : { $search : req.query.val}}).toArray()
-  res.render('search.ejs',{posts:result})
+  let result = await db.collection('post').aggregate(searchCondition).toArray()
+  res.render('search.ejs',{
+    posts:result,
+    user: req.user
+  })
 })

@@ -29,8 +29,13 @@
                 <a href="/detail/<%=posts[i]._id %>">
                     <%=posts[i].title%>
                 </a>
-                <a href="/edit/<%=posts[i]._id %>">✏️</a>
-                <span class="delete" data-id="<%=posts[i]._id%>">🗑️</span>
+                <!-- <p><%=posts[i].user%></p>
+                <p><%=user._id%></p> -->
+                <% if (user && posts[i].user && posts[i].user.toString() == user._id.toString()) { %>
+                    <a href="/edit/<%=posts[i]._id %>">✏️</a>
+                    <span class="delete" data-id="<%=posts[i]._id%>">🗑️</span>
+                <% } %>
+                  
             </h4>
             <p><%=posts[i].content%></p>
         </div>
@@ -38,7 +43,7 @@
         <% } %>
     </div> 
     <% if (posts && posts.length > 0 && posts[posts.length - 1]) { %>
-        <a href="/api/list/next/<%= posts[posts.length-1]._id %>">다음</a>
+        <a href="/list/next/<%= posts[posts.length-1]._id %>">다음</a>
       <% } %>
       
 
