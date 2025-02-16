@@ -23,7 +23,6 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const MongoStore = require('connect-mongo')
 
-
 app.use(passport.initialize())
 app.use(session({
   secret: '비번',
@@ -40,10 +39,34 @@ app.use(passport.session())
 
 
 
+const { S3Client } = require('@aws-sdk/client-s3')
+const multer = require('multer')
+const multerS3 = require('multer-s3')
+// const connectDB = require('./database.js')
+const s3 = new S3Client({
+  region : 'ap-northeast-2',
+  credentials : {
+      accessKeyId : process.env.S3_KEY,
+      secretAccessKey : process.env.S3_SECRET
+  }
+})
+
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: 'seolguforum',
+    key: function (req, file, cb) {
+      cb(null, Date.now().toString()) //업로드시 파일명 변경가능
+    }
+  })
+})
+
 
 
 let db
-new MongoClient(url).connect().then((client)=>{
+let connectDB = require('./database.js')
+
+connectDB.then((client)=>{
   console.log('DB연결성공')
   db = client.db('forum')
   app.listen(8080, () => {
@@ -54,7 +77,12 @@ new MongoClient(url).connect().then((client)=>{
 })
 
 
-
+const checkLogin = (req, res, next) =>{
+  if(!req.user){
+    return res.redirect('/login')
+  }
+  next()
+}
 
 app.get('/', (req, res) => {
   // res.sendFile(__dirname + '/index.html');
@@ -86,24 +114,33 @@ app.get('/write', async (req, res) => {
 
 
 app.post('/newpost', async (req, res)=>{
-  console.log(req.body)
+  // console.log(req.body)
+  // console.log(req.file)
 
-  try{
-    if(req.body.title == ''){
-      res.send('제목을 입력하세요')
-    }
-    else{
-      await db.collection('post').insertOne({
-        title: req.body.title,
-        content: req.body.content
-      })
-      res.redirect('/list')
-    }
-  }
-  catch(e){
-    console.log(e)
-    res.status(500).send('서버 에러 발생')
-  }
+  upload.single('img1')(req, res, async (err)=>{
+    if(err) return res.send('업로드 에러')
+
+
+      try{
+        if(req.body.title == ''){
+          res.send('제목을 입력하세요')
+        }
+        else{
+          await db.collection('post').insertOne({
+            title: req.body.title,
+            content: req.body.content,
+            img: req.file.location
+          })
+          res.redirect('/list')
+        }
+      }
+      catch(e){
+        console.log(e)
+        res.status(500).send('서버 에러 발생')
+      }
+  })
+
+  
 })
 
 
@@ -112,7 +149,7 @@ app.get('/detail/:id', async (req, res)=>{
 
     let result = await db.collection('post').findOne({ _id : new ObjectId(req.params.id)})
     if(result == null){
-      res.send('url 입력 오류류')
+      res.send('url 입력 오류')
     }
     else{
       console.log(result)
@@ -227,7 +264,7 @@ passport.deserializeUser(async (user, done) => {
 
 
 app.get('/login', async (req, res) => {
-  console.log(req.user)
+  // console.log(req.user)
   res.render('login.ejs')
 })  
 
@@ -245,13 +282,9 @@ app.post('/login', async (req, res, next) => {
 })  
 
 
-app.get('/mypage', async (req, res) => {
-  console.log(req.user)
-  if(req.user){
-    res.render('mypage.ejs',{user: req.user})
-  } else{
-    res.redirect('/login')
-  }
+app.get('/mypage', checkLogin, async (req, res) => {
+  // console.log(req.user)
+  res.render('mypage.ejs',{user: req.user})
   
 })  
 
@@ -281,6 +314,16 @@ app.post('/register',async (req, res)=>{
     res.redirect('/list')
   }
 
-
   
+})
+
+app.use('/shop', require('./routes/shop.js'))
+
+app.use('/board', require('./routes/board.js'))
+
+app.get('/search',async (req, res)=>{
+  console.log(req.query.val)
+
+  let result = await db.collection('post').find({$text : { $search : req.query.val}}).toArray()
+  res.render('search.ejs',{posts:result})
 })
