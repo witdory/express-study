@@ -10,9 +10,26 @@
     <body class="grey-bg">
         <%- include('nav.ejs')%>
         <div class="detail-bg">
-            <h4><%=post.title%></h4>
-            <p><%=post.content%></p>
-            <img src="<%=post.img%>">
-        </div> 
+            <h4><%= post.title %></h4>
+            <p><%=post.createdAt%></p>
+            <p><%= post.content %></p>
+            <hr style="margin-top: 60px">
+            <h4>댓글 <%=comments.length%>개</h4>
+            <div>
+            <%for(let i = 0; i<comments.length; i++){%>
+                <p><strong><%=comments[i].writerName%></strong>  <%= comments[i].content%></p>
+            <%}%>
+            </div>
+
+            <form action="/comment?parent=<%=post._id%>" method="POST">
+              <input name="content">
+              <!-- <input name="parentId" value="<%= post._id %>" style="display: none"> -->
+              <button type="submit">댓글작성</button>
+            </form>
+        </div>
+
+        
+
+
       </body>
 </html>

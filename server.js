@@ -162,15 +162,21 @@ app.post('/newpost', async (req, res)=>{
 
 
 app.get('/detail/:id', async (req, res)=>{
-   try{
+  try{
 
-    let result = await db.collection('post').findOne({ _id : new ObjectId(req.params.id)})
-    if(result == null){
+    let post = await db.collection('post').findOne({ _id : new ObjectId(req.params.id)})
+    let comments = await db.collection('comment').find({parentId: new ObjectId(req.params.id)}).toArray()
+    
+    if(post == null ){
       res.send('url 입력 오류')
     }
+    
     else{
-      console.log(result)
-      res.render('detail.ejs',{post:result})
+      console.log(post)
+      res.render('detail.ejs',{
+        post:post,
+        comments: comments
+      })
     }
     
   }
@@ -188,6 +194,10 @@ app.get('/edit/:id', async (req, res)=>{
    let result = await db.collection('post').findOne({ _id : new ObjectId(req.params.id)})
    if(result == null){
      res.send('url 입력 오류')
+   }
+   else if(result.user.toString() != req.user._id.toString()){
+    res.send('작성자만 수정할 수 있습니다')
+   
    }
    else{
      console.log(result)
@@ -239,7 +249,7 @@ app.get('/list/:page', async (req, res) => {
 
   let result = await db.collection('post').find().skip((req.params.page-1)*5).limit(5).toArray()
   
-  res.render('list.ejs', {posts: result})
+  res.render('list.ejs', {posts: result, user: req.user})
 })  
 
 app.get('/list/next/:id', async (req, res) => {
@@ -249,7 +259,7 @@ app.get('/list/next/:id', async (req, res) => {
   .find({_id : {$gt : new ObjectId(req.params.id)}})
   .limit(5).toArray()
   
-  res.render('list.ejs', {posts: result})
+  res.render('list.ejs', {posts: result, user: req.user})
 })  
 
 
@@ -358,4 +368,15 @@ app.get('/search', async (req, res)=>{
     posts:result,
     user: req.user
   })
+})
+
+app.post('/comment', async (req, res)=>{
+  await db.collection('comment').insertOne({
+    content: req.body.content,
+    writerId: new ObjectId(req.user._id),
+    writerName: req.user.username,
+    parentId: new ObjectId(req.query.parent),
+    createdAt: new Date()
+  })
+  res.redirect('/detail/'+req.query.parent)
 })
