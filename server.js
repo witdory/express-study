@@ -328,6 +328,12 @@ app.post('/login', async (req, res, next) => {
   
 })  
 
+app.get('/logout', (req, res, next) => {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/');  // 로그아웃 후 원하는 페이지로 리다이렉션
+  });
+});
 
 app.get('/mypage', checkLogin, async (req, res) => {
   // console.log(req.user)
@@ -388,17 +394,23 @@ app.get('/search', async (req, res)=>{
 })
 
 app.post('/comment', async (req, res)=>{
-  await db.collection('comment').insertOne({
-    content: req.body.content,
-    writerId: new ObjectId(req.user._id),
-    writerName: req.user.username,
-    parentId: new ObjectId(req.query.parent),
-    createdAt: new Date(),
-
-  })
-  await db.collection('post').updateOne(
-    { _id: new ObjectId(req.query.parent) },
-    { $inc: { commentCount: 1 } }
-  );
-  res.redirect('/detail/'+req.query.parent)
+  if(req.user){
+    await db.collection('comment').insertOne({
+      content: req.body.content,
+      writerId: new ObjectId(req.user._id),
+      writerName: req.user.username,
+      parentId: new ObjectId(req.query.parent),
+      createdAt: new Date(),
+  
+    })
+    await db.collection('post').updateOne(
+      { _id: new ObjectId(req.query.parent) },
+      { $inc: { commentCount: 1 } }
+    );
+    res.redirect('/detail/'+req.query.parent)
+  }
+  else{
+    res.redirect('/login')
+  }
+  
 })

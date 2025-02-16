@@ -31,7 +31,14 @@
                 %>
                 <p>| <%= formattedDate %></p>
             </div>
-            
+            <!-- 수정/삭제 버튼: 로그인한 사용자가 게시글 작성자일 때만 보여줌 -->
+    <% if(user && post.user.toString() === user._id.toString()) { %>
+        <div style="margin-top: 10px;">
+          <a href="/edit/<%= post._id %>">수정</a>
+          <!-- 삭제는 fetch API를 이용하여 비동기로 처리 -->
+          <button id="deleteBtn" data-id="<%= post._id %>">삭제</button>
+        </div>
+      <% } %>
 
             <hr style="margin-top: 10px">
             <p><%= post.content %></p>
@@ -52,7 +59,29 @@
             </form>
         </div>
 
-        
+        <script>
+            // 삭제 버튼 클릭 시 게시글 삭제 API 호출
+            const deleteBtn = document.getElementById('deleteBtn');
+            if(deleteBtn) {
+              deleteBtn.addEventListener('click', function(){
+                const postId = this.dataset.id;
+                if(confirm('정말 삭제하시겠습니까?')) {
+                  fetch('/api/posts?postid=' + postId, {
+                    method: 'DELETE'
+                  })
+                  .then(response => response.text())
+                  .then(result => {
+                    alert('게시글이 삭제되었습니다.');
+                    window.location.href = '/list';
+                  })
+                  .catch(err => {
+                    console.error(err);
+                    alert('삭제 중 오류가 발생했습니다.');
+                  });
+                }
+              });
+            }
+          </script>
 
 
       </body>
