@@ -19,8 +19,9 @@ body {
 }
 .white-bg {
   background: white;
-  margin: 20px;
+  margin: 20px auto 0px;
   border-radius: 5px;
+  
 }
 .list-box {
   padding : 10px;
@@ -90,10 +91,15 @@ input,div {
 }
 .detail-info{
   display: flex;
-  align-items: center; /* 세로 정렬 */
+  align-items: center; 
   gap: 5px; /* 요소 간 간격 조정 */
   flex-direction: row;
   flex-wrap: wrap;
+  margin-top:0px;
+}
+.detail-info p{
+  color: grey;
+  margin: 5px 0 5px 0px;
 }
 h4{
   margin: 0px;

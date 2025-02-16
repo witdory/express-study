@@ -34,7 +34,10 @@
                 <%}%>
                 <span> 조회 <%=posts[i].viewCount%> </span>
                  -->
+            <%if(posts[i].commentCount){%>
+
                  <span>[<%= posts[i].commentCount %>]</span>
+                 <%}%>
 
 
                 <% if (user && posts[i].user && posts[i].user.toString() == user._id.toString()) { %>
@@ -45,12 +48,10 @@
             </h4>
             <!-- <p><%=posts[i].content%></p> -->
              
-            <%if(posts[i].commentCount){%>
                 <div>
                     <span style="font-size: 15px; color:grey">조회 <%= posts[i].viewCount %></span>
                 </div>
                 
-            <%}%>
             
             
         </div>
@@ -58,7 +59,8 @@
         <% } %>
     </div> 
     <% if (posts && posts.length > 0 && posts[posts.length - 1]) { %>
-        <a href="/list/next/<%= posts[posts.length-1]._id %>">다음</a>
+        <span><a href="/list/next/<%= posts[posts.length-1]._id %>">이전</a></span>
+        <span><a href="/list/next/<%= posts[posts.length-1]._id %>">다음</a></span>
       <% } %>
       
 

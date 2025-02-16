@@ -84,6 +84,12 @@ const checkLogin = (req, res, next) =>{
   next()
 }
 
+
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
+
 app.get('/', (req, res) => {
   // res.sendFile(__dirname + '/index.html');
   res.redirect('/list')
@@ -160,8 +166,6 @@ app.post('/newpost', async (req, res)=>{
         res.status(500).send('서버 에러 발생')
       }
   })
-
-  
 })
 
 

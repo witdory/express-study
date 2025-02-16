@@ -17,7 +17,19 @@
                 <p><%=post.username%></p>
                 <br>
                 <p>조회 <%=post.viewCount%></p>
-                <p>| <%=post.createdAt%></p>
+                <!-- <p>| <%=post.createdAt%></p> -->
+                <%
+                    // post.createdAt가 ISO 문자열 형태로 저장되어 있다면,
+                    // Date 객체로 변환 후 원하는 형식으로 포맷팅합니다.
+                    const d = new Date(post.createdAt);
+                    const year = d.getFullYear();
+                    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                    const day = d.getDate().toString().padStart(2, '0');
+                    const hour = d.getHours().toString().padStart(2, '0');
+                    const minute = d.getMinutes().toString().padStart(2, '0');
+                    const formattedDate = `${year}-${month}-${day} ${hour}:${minute}`;
+                %>
+                <p>| <%= formattedDate %></p>
             </div>
             
 
