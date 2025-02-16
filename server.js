@@ -94,11 +94,12 @@ app.get('/news', (req, res) => {
 }) 
 
 app.get('/list', async (req, res) => {
-  let result = await db.collection('post').find().toArray()
-  // console.log(result[0])
-  res.render('list.ejs', {
-    posts: result,
-  user: req.user})
+  // let result = await db.collection('post').find().sort({ createdAt: -1 }).toArray()
+  // // console.log(result[0])
+  // res.render('list.ejs', {
+  //   posts: result,
+  // user: req.user})
+  res.redirect('/list/1')
 }) 
 
 
@@ -135,7 +136,8 @@ app.post('/newpost', async (req, res)=>{
               createdAt: new Date(),
               img: req.file.location,
               user: req.user._id,
-              username: req.user.username
+              username: req.user.username,
+              viewCount: 0
             })
           }
           else{
@@ -144,7 +146,9 @@ app.post('/newpost', async (req, res)=>{
               content: req.body.content,
               createdAt: new Date(),
               user: req.user._id,
-              username: req.user.username
+              username: req.user.username,
+              viewCount: 0
+
             })
           }
           console.log('글 작성 성공')
@@ -166,11 +170,14 @@ app.get('/detail/:id', async (req, res)=>{
 
     let post = await db.collection('post').findOne({ _id : new ObjectId(req.params.id)})
     let comments = await db.collection('comment').find({parentId: new ObjectId(req.params.id)}).toArray()
-    
+    await db.collection('post').updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $inc: { viewCount: 1 } }
+    );
+
     if(post == null ){
-      res.send('url 입력 오류')
+      res.send('게시글이 존재하지 않습니다.')
     }
-    
     else{
       console.log(post)
       res.render('detail.ejs',{
@@ -178,6 +185,7 @@ app.get('/detail/:id', async (req, res)=>{
         comments: comments
       })
     }
+
     
   }
   catch(e){
@@ -247,7 +255,12 @@ app.delete('/api/posts', async (req, res)=> {
 app.get('/list/:page', async (req, res) => {
   // 1번~5번 글을 찾아서 result에 저장
 
-  let result = await db.collection('post').find().skip((req.params.page-1)*5).limit(5).toArray()
+  let result = await db.collection('post')
+  .find()
+  .sort({ createdAt: -1 })
+  .skip((req.params.page-1)*10)
+  .limit(10)
+  .toArray()
   
   res.render('list.ejs', {posts: result, user: req.user})
 })  
@@ -257,7 +270,7 @@ app.get('/list/next/:id', async (req, res) => {
 
   let result = await db.collection('post')
   .find({_id : {$gt : new ObjectId(req.params.id)}})
-  .limit(5).toArray()
+  .limit(10).toArray()
   
   res.render('list.ejs', {posts: result, user: req.user})
 })  
@@ -376,7 +389,12 @@ app.post('/comment', async (req, res)=>{
     writerId: new ObjectId(req.user._id),
     writerName: req.user.username,
     parentId: new ObjectId(req.query.parent),
-    createdAt: new Date()
+    createdAt: new Date(),
+
   })
+  await db.collection('post').updateOne(
+    { _id: new ObjectId(req.query.parent) },
+    { $inc: { commentCount: 1 } }
+  );
   res.redirect('/detail/'+req.query.parent)
 })

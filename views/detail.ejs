@@ -10,10 +10,22 @@
     <body class="grey-bg">
         <%- include('nav.ejs')%>
         <div class="detail-bg">
+
             <h4><%= post.title %></h4>
-            <p><%=post.createdAt%></p>
+
+            <div class="detail-info">
+                <p><%=post.username%></p>
+                <br>
+                <p>조회 <%=post.viewCount%></p>
+                <p>| <%=post.createdAt%></p>
+            </div>
+            
+
+            <hr style="margin-top: 10px">
             <p><%= post.content %></p>
-            <hr style="margin-top: 60px">
+
+
+            <hr style="margin-top: 50px">
             <h4>댓글 <%=comments.length%>개</h4>
             <div>
             <%for(let i = 0; i<comments.length; i++){%>

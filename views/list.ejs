@@ -28,16 +28,31 @@
             <h4>
                 <a href="/detail/<%=posts[i]._id %>">
                     <%=posts[i].title%>
-                </a>
-                <!-- <p><%=posts[i].user%></p>
-                <p><%=user._id%></p> -->
+                </a> 
+                <!-- <%if(posts[i].commentCount){%>
+                <span>  [<%=posts[i].commentCount%>] </span>
+                <%}%>
+                <span> 조회 <%=posts[i].viewCount%> </span>
+                 -->
+                 <span>[<%= posts[i].commentCount %>]</span>
+
+
                 <% if (user && posts[i].user && posts[i].user.toString() == user._id.toString()) { %>
                     <a href="/edit/<%=posts[i]._id %>">✏️</a>
                     <span class="delete" data-id="<%=posts[i]._id%>">🗑️</span>
                 <% } %>
                   
             </h4>
-            <p><%=posts[i].content%></p>
+            <!-- <p><%=posts[i].content%></p> -->
+             
+            <%if(posts[i].commentCount){%>
+                <div>
+                    <span style="font-size: 15px; color:grey">조회 <%= posts[i].viewCount %></span>
+                </div>
+                
+            <%}%>
+            
+            
         </div>
 
         <% } %>

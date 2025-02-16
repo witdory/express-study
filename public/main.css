@@ -63,7 +63,10 @@ input,div {
 .detail-bg {
   background: white;
   padding: 15px;
-  margin-top: 10px;
+  margin: 10px auto 0;
+  width: 60%;
+  border-radius: 10px;
+
 }
 
 .search{
@@ -79,4 +82,19 @@ input,div {
   vertical-align: middle;
 
 
+}
+.flex-container {
+  display: flex;
+  align-items: center; /* 수직 정렬 */
+  gap: 1px; /* 요소 간 간격 */
+}
+.detail-info{
+  display: flex;
+  align-items: center; /* 세로 정렬 */
+  gap: 5px; /* 요소 간 간격 조정 */
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+h4{
+  margin: 0px;
 }
