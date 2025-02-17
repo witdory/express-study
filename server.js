@@ -312,7 +312,7 @@ passport.deserializeUser(async (user, done) => {
 
 app.get('/login', async (req, res) => {
   // console.log(req.user)
-  res.render('login.ejs')
+  res.render('login.ejs',{ redirect: req.query.redirect || '' })
 })  
 
 
@@ -320,10 +320,13 @@ app.post('/login', async (req, res, next) => {
   passport.authenticate('local', (error, user, info)=>{
     if(error) return res.status(500).json(error)
     if(!user) return res.status(401).json(info.message)
-    req.logIn(user, (err)=>{
-      if(err) return next(err)
-      res.redirect('/')
-    })
+
+      req.logIn(user, (err) => {
+        if (err) return next(err);
+        // POST 요청에서는 req.body.redirect 사용
+        const redirectUrl = req.body.redirect || '/';
+        res.redirect(redirectUrl);
+      });
   })(req, res, next)
   
 })  
@@ -414,3 +417,5 @@ app.post('/comment', async (req, res)=>{
   }
   
 })
+
+app.use('/chat',require('./routes/chat.js'))

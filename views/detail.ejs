@@ -38,7 +38,10 @@
           <!-- 삭제는 fetch API를 이용하여 비동기로 처리 -->
           <button id="deleteBtn" data-id="<%= post._id %>">삭제</button>
         </div>
-      <% } %>
+      <%}else{%>
+        <p><%=post.user%></p>
+        <a href="/chat/request?writerId=<%=post.user%>">채팅하기</a>
+        <%}%>
 
             <hr style="margin-top: 10px">
             <p><%= post.content %></p>
