@@ -11,18 +11,84 @@
         <%- include('nav.ejs')%>
 
         <%=JSON.stringify(room)%>
+        
         <div class="detail-bg">
+
+            <header class="chat-nav">
+                <h2><%= room.roomName %></h2>
+                <a href="/chat/list">채팅 목록</a>
+              </header>
+
+
             <div class="chat-screen">
+              <!-- <div class="chat-box"><span>안녕하세요</span></div>
               <div class="chat-box"><span>안녕하세요</span></div>
-              <div class="chat-box"><span>안녕하세요</span></div>
-              <div class="chat-box mine"><span>안녕하세요</span></div>
+              <div class="chat-box mine"><span>안녕하세요</span></div> -->
             </div>
-          </div>
-          <div class="chat-form">
+          
+            
+        </div>
+        <div class="chat-form">
             <input class="chat-input">
             <button class="chat-button">전송</button>
-      </div>
+        </div>
 
+      <script src="https://cdn.jsdelivr.net/npm/socket.io@4.7.2/client-dist/socket.io.min.js"></script>
+      <script>
+        const socket = io() 
+        socket.emit('ask-join','<%=room._id%>')
+
+        document.querySelector('.chat-button').addEventListener('click',
+            function(){
+                let msg = document.querySelector('.chat-input').value
+                socket.emit('message-send',{
+                    msg: msg, 
+                    room: '<%=room._id%>', 
+                    user: '<%=user._id%>',
+                    sentAt: new Date()
+                })
+                document.querySelector('.chat-input').value = ''; // 입력창 비우기
+            }
+        )
+
+        // socket.on('message-broadcast',(data)=>{
+        //     if(data.user == '<%=user._id%>'){
+        //         document.querySelector('.chat-screen').insertAdjacentHTML('beforeend',`<div class="chat-box mine"><span>${data.msg}</span></div>`)
+        //     }
+        //     else{
+        //         document.querySelector('.chat-screen').insertAdjacentHTML('beforeend',`<div class="chat-box"><span>${data.msg}</span></div>`)
+        //     }
+        // })
+
+        // 실시간 메시지 수신
+        socket.on('message-broadcast', (data) => {
+        addMessage(data);
+        });
+
+        // 이전 대화 불러오기 (클라이언트 사이드 API 호출)
+        fetch('/chat/messages?roomId=<%= room._id %>')
+            .then(response => response.json())
+            .then(messages => {
+                messages.forEach(message => {
+                addMessage(message);
+                });
+            })
+            .catch(error => console.error('메시지 불러오기 오류:', error));
+
+        // 메시지를 화면에 추가하는 함수
+        function addMessage(message) {
+            const chatScreen = document.querySelector('.chat-screen');
+            // 현재 사용자의 메시지와 다른 사용자의 메시지 구분
+            const isMine = message.user.toString() === '<%= user._id %>';
+            const messageBox = `
+                <div class="chat-box ${isMine ? 'mine' : ''}">
+                <span>${message.msg}</span>
+                </div>
+            `;
+            chatScreen.insertAdjacentHTML('beforeend', messageBox);
+        }
+
+      </script>
 
       </body>
 </html>

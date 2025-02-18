@@ -5,6 +5,12 @@ const { MongoClient, ObjectId } = require('mongodb')
 const methodOverride = require('method-override')
 const bcrypt = require('bcrypt')
 
+const { createServer } = require('http')
+const { Server } = require('socket.io')
+const server = createServer(app)
+const io = new Server(server) 
+
+
 require("dotenv").config()
 const url = process.env.DB_URL
 
@@ -69,7 +75,7 @@ let connectDB = require('./database.js')
 connectDB.then((client)=>{
   console.log('DB연결성공')
   db = client.db('forum')
-  app.listen(8080, () => {
+  server.listen(8080, () => {
     console.log('http://localhost:8080 에서 서버 실행중')
 })
 }).catch((err)=>{
@@ -183,7 +189,7 @@ app.get('/detail/:id', async (req, res)=>{
       res.send('게시글이 존재하지 않습니다.')
     }
     else{
-      console.log(post)
+      // console.log(post)
       res.render('detail.ejs',{
         post:post,
         comments: comments
@@ -419,3 +425,32 @@ app.post('/comment', async (req, res)=>{
 })
 
 app.use('/chat',require('./routes/chat.js'))
+
+
+io.on('connection',(socket)=>{
+
+  socket.on('age',(data)=>{
+    console.log('유저가 보낸 데이터: ', data)
+    io.emit('name', 'kim')
+  })
+
+  socket.on('ask-join',(data)=>{
+    socket.join(data)
+
+  })
+  socket.on('message-send',async (data)=>{
+    await db.collection('messages').insertOne({
+      roomId: new ObjectId(data.room),
+      msg: data.msg,
+      user: new ObjectId(data.user),
+      sentAt: data.sentAt
+    })
+    io.to(data.room).emit('message-broadcast',{
+      msg: data.msg,
+      user: data.user,
+      sentAt: data.sentAt
+    })
+    console.log(data)
+  })
+
+})
