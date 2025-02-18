@@ -10,10 +10,16 @@ const { Server } = require('socket.io')
 const server = createServer(app)
 const io = new Server(server) 
 
+const morgan = require('morgan');
+const fs = require('fs');
+const path = require('path');
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+
+app.use(morgan('combined',{ stream: accessLogStream }));
+
 
 require("dotenv").config()
 const url = process.env.DB_URL
-
 
 app.use(express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
