@@ -40,7 +40,7 @@
                  <%}%>
 
 
-                <% if (user && posts[i].user && posts[i].user.toString() == user._id.toString() || user.username == 'admin') { %>
+                <% if (user && posts[i].user? && posts[i].user.toString() == user._id.toString() || user.username == 'admin') { %>
                     <a href="/edit/<%=posts[i]._id %>">✏️</a>
                     <span class="delete" data-id="<%=posts[i]._id%>">🗑️</span>
                 <% } %>
