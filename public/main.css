@@ -63,7 +63,7 @@ input,div {
 
 .detail-bg {
   background: white;
-  padding: 0px;
+  padding: 15px;
   margin: 10px auto 10px;
   width: 60%;
   border-radius: 10px;
@@ -103,6 +103,15 @@ input,div {
 }
 h4{
   margin: 0px;
+}
+
+.chat-bg {
+  background: white;
+  padding: 0px;
+  margin: 10px auto 10px;
+  width: 60%;
+  border-radius: 10px;
+
 }
 
 .chat-nav {

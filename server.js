@@ -101,9 +101,6 @@ app.get('/', (req, res) => {
   res.redirect('/list')
 }) 
 
-app.get('/news', (req, res) => {
-  db.collection('post').insertOne({title: '2월 2일'})
-}) 
 
 app.get('/list', async (req, res) => {
   // let result = await db.collection('post').find().sort({ createdAt: -1 }).toArray()
@@ -115,16 +112,19 @@ app.get('/list', async (req, res) => {
 }) 
 
 
-app.get('/write', async (req, res) => {
+app.get('/write',checkLogin, (req, res) => {
 
   // let result = await db.collection('post').find().toArray()
   // res.render('write.ejs', {posts: result})
-  if(req.user){
-    res.render('write.ejs')
-  }
-  else{
-    res.redirect('/login')
-  }
+
+
+  // if(req.user){
+  //   res.render('write.ejs')
+  // }
+  // else{
+  //   res.redirect('/login')
+  // }
+  res.render('write.ejs')
 }) 
 
 
@@ -425,6 +425,8 @@ app.post('/comment', async (req, res)=>{
 })
 
 app.use('/chat',require('./routes/chat.js'))
+
+
 
 
 io.on('connection',(socket)=>{
