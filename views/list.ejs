@@ -39,11 +39,14 @@
                  <span>[<%= posts[i].commentCount %>]</span>
                  <%}%>
 
-
-                <% if (user && posts[i].user? && posts[i].user.toString() == user._id.toString() || user.username == 'admin') { %>
-                    <a href="/edit/<%=posts[i]._id %>">✏️</a>
-                    <span class="delete" data-id="<%=posts[i]._id%>">🗑️</span>
-                <% } %>
+                 <% if (user && (posts[i].user?.toString() === user._id?.toString() || user.username === 'admin')) { %>
+                    <!-- 수정/삭제 버튼 표시 -->
+                    <a href="/edit/<%= posts[i]._id %>">✏️</a>
+                    <span class="delete" data-id="<%= posts[i]._id %>">🗑️</span>
+                  <% } %>
+                  
+                  
+                  
                   
             </h4>
             <!-- <p><%=posts[i].content%></p> -->

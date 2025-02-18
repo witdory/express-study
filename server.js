@@ -309,10 +309,16 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (user, done) => {
 
   let result = await db.collection('user').findOne({_id :  new ObjectId(user.id)})
-  delete result.password
-  process.nextTick(()=>{
-    done(null, result)
-  })
+  if (result) {
+    delete result.password;
+    process.nextTick(() => {
+      done(null, result);
+    });
+  } else {
+    process.nextTick(() => {
+      done(null, user);  // 또는 에러를 반환하도록 할 수 있음
+    });
+  }
 })
 
 
