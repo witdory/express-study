@@ -1,2 +1,0 @@
-::1 - - [18/Feb/2025:21:57:53 +0000] "GET /list/1 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36"
-::1 - - [18/Feb/2025:21:57:53 +0000] "GET /main.css HTTP/1.1" 304 - "http://localhost:8080/list/1" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36"
