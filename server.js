@@ -272,7 +272,7 @@ app.get('/list/:page', async (req, res) => {
   .limit(10)
   .toArray()
   
-  res.render('list.ejs', {posts: result, user: req.user})
+  res.render('list.ejs', {posts: result})
 })  
 
 app.get('/list/next/:id', async (req, res) => {
