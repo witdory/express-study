@@ -26,7 +26,7 @@
 
         <div class="list-box">
             <h4>
-                <a href="/detail/<%=posts[i]._id %>">
+                <a href="/post/detail/<%=posts[i]._id %>">
                     <%=posts[i].title%>
                 </a> 
                 <!-- <%if(posts[i].commentCount){%>
@@ -41,7 +41,7 @@
 
                  <% if (user && (posts[i].user?.toString() === user._id?.toString() || user.username === 'admin')) { %>
                     <!-- 수정/삭제 버튼 표시 -->
-                    <a href="/edit/<%= posts[i]._id %>">✏️</a>
+                    <a href="/post/edit/<%= posts[i]._id %>">✏️</a>
                     <span class="delete" data-id="<%= posts[i]._id %>">🗑️</span>
                   <% } %>
                   
@@ -62,17 +62,23 @@
 
         <% } %>
     </div> 
-    <% if (posts && posts.length > 0 && posts[posts.length - 1]) { %>
-        <span><a href="/list/next/<%= posts[posts.length-1]._id %>">이전</a></span>
-        <span><a href="/list/next/<%= posts[posts.length-1]._id %>">다음</a></span>
-      <% } %>
+    <div class="pagination" style="margin: 20px 0;">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <% if (i === currentPage) { %>
+            <strong style="margin: 0 5px;"><%= i %></strong>
+          <% } else { %>
+            <a href="/post/list/<%= i %>" style="margin: 0 5px;"><%= i %></a>
+          <% } %>
+        <% } %>
+      </div>
+      
       
 
     <script>
         
         document.querySelectorAll('.delete').forEach((button)=>{
             button.addEventListener('click', (e)=>{
-                fetch('/api/posts?postid=' + e.currentTarget.dataset.id, {
+                fetch('/post/api/posts?postid=' + e.currentTarget.dataset.id, {
                     method : 'DELETE',
                 })
                 .then((r)=>r.text())

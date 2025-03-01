@@ -9,14 +9,13 @@ let db
 let connectDB = require('./../database.js')
 
 connectDB.then((client)=>{
-  console.log('DB연결성공2')
   db = client.db('forum')
   
 }).catch((err)=>{
   console.log(err)
 })
 
-const checkLogin = require('./../checkLogin.js')
+const checkLogin = require('./../middlewares/checkLogin.js')
 
 router.get('/request', checkLogin, async(req, res)=>{
 

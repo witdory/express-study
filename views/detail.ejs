@@ -1,3 +1,4 @@
+<!-- detail.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,13 +37,13 @@
             <%if(user){%>
               <% if(post.user?.toString() === user._id.toString()) { %>
                 <div style="margin-top: 10px;">
-                  <a href="/edit/<%= post._id %>">수정</a>
+                  <a href="/post/edit/<%= post._id %>">수정</a>
                   <!-- 삭제는 fetch API를 이용하여 비동기로 처리 -->
                   <button id="deleteBtn" data-id="<%= post._id %>">삭제</button>
                 </div>
               <%}else if(user.username == 'admin'){%>
                 <div style="margin-top: 10px;">
-                  <a href="/edit/<%= post._id %>">수정</a>
+                  <a href="/post/edit/<%= post._id %>">수정</a>
                   <!-- 삭제는 fetch API를 이용하여 비동기로 처리 -->
                   <button id="deleteBtn" data-id="<%= post._id %>">삭제</button>
                   <a href="/chat/request?writerId=<%=post.user%>">채팅하기</a>
@@ -56,6 +57,11 @@
               <a href="/chat/request?writerId=<%=post.user%>">채팅하기</a>
             <%}%>
             <hr style="margin-top: 10px">
+
+            <% if (post.img) { %>
+              <img src="<%= post.img %>" alt="게시글 이미지" style="max-width:100%; height:auto; margin-top: 10px;">
+            <% } %>
+
             <p><%= post.content %></p>
 
 
@@ -67,7 +73,7 @@
             <%}%>
             </div>
 
-            <form action="/comment?parent=<%=post._id%>" method="POST">
+            <form action="/post/comment?parent=<%=post._id%>" method="POST">
               <input name="content">
               <!-- <input name="parentId" value="<%= post._id %>" style="display: none"> -->
               <button type="submit">댓글작성</button>
@@ -81,7 +87,7 @@
               deleteBtn.addEventListener('click', function(){
                 const postId = this.dataset.id;
                 if(confirm('정말 삭제하시겠습니까?')) {
-                  fetch('/api/posts?postid=' + postId, {
+                  fetch('/post/api/posts?postid=' + postId, {
                     method: 'DELETE'
                   })
                   .then(response => response.text())
