@@ -63,10 +63,23 @@
             <% } %>
 
             <p><%= post.content %></p>
+            <br>
+            
+            <span>좋아요 <%=post.like || 0%></span>
+            <form action="/post/detail/<%=post._id%>/like" method="post">
+              <input type="text" name="postid" style="display:none">
+              <button type="submit">좋아요</button>
+            </form>
 
+            <span>싫어요 <%=post.dislike || 0%></span>
+            <form action="/post/detail/<%=post._id%>/dislike" method="post">
+              <input type="text" name="postid" style="display:none">
+              <button type="submit">싫어요</button>
+            </form>
 
-            <hr style="margin-top: 50px">
+            <hr style="margin-top: 20px">
             <h4>댓글 <%=comments.length%>개</h4>
+
             <div>
             <%for(let i = 0; i<comments.length; i++){%>
                 <p><strong><%=comments[i].writerName%></strong>  <%= comments[i].content%></p>

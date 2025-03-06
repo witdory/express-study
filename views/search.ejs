@@ -39,10 +39,18 @@
 
         <% } %>
     </div> 
-    <% if (posts && posts.length > 0 && posts[posts.length - 1]) { %>
+    <!-- <% if (posts && posts.length > 0 && posts[posts.length - 1]) { %>
         <a href="/api/list/next/<%= posts[posts.length-1]._id %>">다음</a>
-      <% } %>
-      
+      <% } %> -->
+      <div class="pagination" style="margin: 20px 0;">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <% if (i === currentPage) { %>
+            <strong style="margin: 0 5px;"><%= i %></strong>
+          <% } else { %>
+            <a href="/post/list/<%= i %>" style="margin: 0 5px;"><%= i %></a>
+          <% } %>
+        <% } %>
+      </div>
 
     <script>
         

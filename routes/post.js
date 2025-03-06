@@ -144,6 +144,8 @@ router.post('/newpost', checkLogin, async (req, res) => {
         user: req.user._id,
         username: req.user.username,
         viewCount: 0,
+        like:0,
+        dislike:0
       };
 
       // 이미지가 있다면 img 필드 추가
@@ -211,6 +213,7 @@ router.delete('/api/posts', checkLogin, async (req, res) => {
 });
 
 router.post('/comment', async (req, res)=>{
+  console.log(req)
   if(req.user){
     await db.collection('comment').insertOne({
       content: req.body.content,
@@ -229,7 +232,30 @@ router.post('/comment', async (req, res)=>{
   else{
     res.redirect('/login')
   }
-  
+})
+
+router.post('/detail/:id/like', checkLogin,  async(req, res)=>{
+  await db.collection('post').updateOne(
+    {_id: new ObjectId(req.params.id)},
+    {$inc: {like:1}}
+  )
+  // let result = await db.collection('post').findOne({
+  //   _id:new ObjectId(req.params.id)
+  // })
+  // console.log(result)
+  res.redirect('/post/detail/'+req.params.id)
+})
+
+router.post('/detail/:id/dislike', checkLogin,  async(req, res)=>{
+  await db.collection('post').updateOne(
+    {_id: new ObjectId(req.params.id)},
+    {$inc: {dislike:1}}
+  )
+  // let result = await db.collection('post').findOne({
+  //   _id:new ObjectId(req.params.id)
+  // })
+  // console.log(result)
+  res.redirect('/post/detail/'+req.params.id)
 })
 
 

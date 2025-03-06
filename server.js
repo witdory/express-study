@@ -163,21 +163,27 @@ app.use('/auth',require('./routes/auth.js'))
 
 
 app.get('/search', async (req, res)=>{
-  console.log(req.query.val)
+  let page = parseInt(req.params.page) || 1;
+  const limit = 10;
+  const totalCount = await db.collection('post').countDocuments();
+    const totalPages = Math.ceil(totalCount / limit);
+  // console.log(req.query.val)
   let searchCondition = [
     {$search : {
       index : 'title_index',
       text : { query : req.query.val, path : 'title' }
     }},
     {$sort : {createdAt : 1}},
-    {$limit : 3}
+    {$limit : limit}
     
   ] 
 
   let result = await db.collection('post').aggregate(searchCondition).toArray()
   res.render('search.ejs',{
     posts:result,
-    user: req.user
+    user: req.user,
+    currentPage: page,
+    totalPages: totalPages
   })
 })
 
