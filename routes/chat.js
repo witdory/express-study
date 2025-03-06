@@ -28,7 +28,7 @@ router.get('/request', checkLogin, async(req, res)=>{
     });
 
     if (!chatRoom) {
-        let roomName = req.user.username + ', ' + writer.username + '의 채팅방'
+        let roomName = writer.username +'와의 채팅'
       await db.collection('chatroom').insertOne({
         roomName: roomName,
         member: [ userId, writerId ],

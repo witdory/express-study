@@ -7,6 +7,7 @@ const checkLogin = require('../middlewares/checkLogin'); // (checkLogin 미들�
 require('dotenv').config()
 
 const passport = require('passport')
+const bcrypt = require('bcrypt')
 
 
 
@@ -80,7 +81,7 @@ router.post('/register',async (req, res)=>{
         username: req.body.username,
         password: hash
         })
-        res.redirect('/list')
+        res.redirect('/post/list')
     }
 
 

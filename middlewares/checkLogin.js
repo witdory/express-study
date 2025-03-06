@@ -3,7 +3,7 @@ const checkLogin = (req, res, next) =>{
     //   return res.redirect('/login')
     // }
     if (!req.user) {
-      return res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
+      return res.redirect('/auth/login?redirect=' + encodeURIComponent(req.originalUrl));
     }
     // if (!req.user) {
     //   req.session.redirectTo = req.originalUrl;
