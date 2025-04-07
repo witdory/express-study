@@ -1,4 +1,4 @@
-<div class="nav">
+<!-- <div class="nav">
     <a class="logo" href="/post/list">Forum</a>
     <% if (user) { %>
         <a href="/post/write">글쓰기</a>
@@ -14,4 +14,71 @@
         <a href="/auth/register">회원가입</a>
         <a href="/chat/list">채팅</a>
     <% } %>
-</div>
+    
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/post/list">Forum</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/post/write">글쓰기</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/auth/login">로그인</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/auth/logout">로그아웃</a>
+              </li>
+              
+              
+            </ul>
+            
+          </div>
+        </div>
+      </nav>
+</div> -->
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/post/list">Forum</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/post/write">글쓰기</a>
+          </li>
+          <% if (user) { %>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/auth/mypage">마이페이지</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/auth/logout">로그아웃</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/chat/list">채팅</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/auth/mypage"><%= user.username %></a>
+            </li>
+          <% } else { %>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/auth/login">로그인</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/auth/register">회원가입</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/chat/list">채팅</a>
+            </li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  

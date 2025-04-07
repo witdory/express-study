@@ -16,7 +16,7 @@ connectDB.then((client)=>{
 router.get('/shirts', async(req, res)=>{
     let result = await db.collection('post').find().toArray()
     // console.log(result)
-    res.send('셔츠판매매')
+    res.send('셔츠판매')
 })
 router.get('/pants', (req, res)=>{
     res.send('바지판매')
