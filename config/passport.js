@@ -12,10 +12,14 @@ module.exports = (db) => {
   }, 
     async (userId, userPassword, done) => {
     try {
-      const result = await db.collection('user').findOne({ username: userId });
+      const result = await db.collection('user').findOne({ 
+        username: userId,
+        provider:'local'
+       });
       if (!result) return done(null, false, { message: '아이디 DB에 없음' });
       const match = await bcrypt.compare(userPassword, result.password);
       if (!match) return done(null, false, { message: '비밀번호 불일치' });
+      
       return done(null, result);
     } catch (err) {
       return done(err);
@@ -25,7 +29,7 @@ module.exports = (db) => {
   const clientID = process.env.KAKAO_CLIENT_ID;
   const clientSecret = process.env.KAKAO_CLIENT_SECRET;
   const callbackURL = process.env.KAKAO_CALLBACK_URL;
-  
+
   passport.use(new KakaoStrategy({
     clientID : clientID,
     clientSecret: clientSecret, // clientSecret을 사용하지 않는다면 넘기지 말거나 빈 스트링을 넘길 것
@@ -36,14 +40,14 @@ module.exports = (db) => {
       
       try {
         const kakaoId = profile.id;
-        const nickname = profile.displayName || profile.username;
+        const username = profile.displayName || profile.username;
         // const email = profile._json?.kakao_account?.email
         let user = await db.collection('user').findOne({kakaoId});
 
         if(!user){
           user = {
             kakaoId,
-            nickname,
+            username,
             profider: 'kakao',
             createdAt: new Date()
           }
