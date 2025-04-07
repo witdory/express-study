@@ -181,10 +181,38 @@ app.get('/search', async (req, res)=>{
   let result = await db.collection('post').aggregate(searchCondition).toArray()
   res.render('search.ejs',{
     posts:result,
+    value: req.params.val,
     user: req.user,
     currentPage: page,
     totalPages: totalPages
   })
+})
+
+app.post('/search', async(req, res)=>{
+  let page = parseInt(req.body.page) || 1;
+  const limit = 10;
+  const totalCount = await db.collection('post').countDocuments();
+  const totalPages = Math.ceil(totalCount / limit);
+
+  let searchCondition = [
+    { $search: {
+        index: 'title_index',
+        text: { query: req.body.val, path: 'title' }
+      }
+    },
+    { $sort: { createdAt: 1 } },
+    { $limit: limit }
+  ];
+  let result = await db.collection('post').aggregate(searchCondition).toArray();
+
+  res.render('search.ejs', {
+    posts: result,
+    value: req.body.val,
+    user: req.user,
+    currentPage:page,
+    totalPages: totalPages
+  })
+
 })
 
 
