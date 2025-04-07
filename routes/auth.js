@@ -28,7 +28,14 @@ router.get('/login', async (req, res) => {
     // console.log(req.user)
     res.render('login.ejs',{ redirect: req.query.redirect || '' })
   })  
-  
+
+router.get('/kakao', passport.authenticate('kakao'))
+router.get('/kakao/callback',
+    passport.authenticate('kakao', {
+        failureRedirect: '/login',
+        successRedirect: '/auth/mypage'
+    })
+)
   
 router.post('/login', async (req, res, next) => {
     passport.authenticate('local', (error, user, info)=>{
@@ -79,7 +86,9 @@ router.post('/register',async (req, res)=>{
         // console.log(hash)
         await db.collection('user').insertOne({
         username: req.body.username,
-        password: hash
+        password: hash,
+        provider: 'local',
+        createdAt: new Date()
         })
         res.redirect('/post/list')
     }

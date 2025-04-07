@@ -1,6 +1,7 @@
 // config/passport.js
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const KakaoStrategy = require('passport-kakao').Strategy;
 const bcrypt = require('bcrypt');
 const { ObjectId } = require('mongodb');
 
@@ -20,6 +21,41 @@ module.exports = (db) => {
       return done(err);
     }
   }));
+
+  const clientID = process.env.KAKAO_CLIENT_ID;
+  const clientSecret = process.env.KAKAO_CLIENT_SECRET;
+  const callbackURL = process.env.KAKAO_CALLBACK_URL;
+  
+  passport.use(new KakaoStrategy({
+    clientID : clientID,
+    clientSecret: clientSecret, // clientSecret을 사용하지 않는다면 넘기지 말거나 빈 스트링을 넘길 것
+    callbackURL : callbackURL
+  },
+    async (accessToken, refreshToken, profile, done) => {
+      // 사용자의 정보는 profile에 들어있다.
+      
+      try {
+        const kakaoId = profile.id;
+        const nickname = profile.displayName || profile.username;
+        // const email = profile._json?.kakao_account?.email
+        let user = await db.collection('user').findOne({kakaoId});
+
+        if(!user){
+          user = {
+            kakaoId,
+            nickname,
+            profider: 'kakao',
+            createdAt: new Date()
+          }
+          const insertResult = await db.collection('user').insertOne(user);
+          user._id = insertResult.insertedId
+        }
+        return done(null, user);
+      } catch(err){
+        return done(err);
+      }
+    }
+  ))
 
   passport.serializeUser((user, done) => {
     process.nextTick(() => {
