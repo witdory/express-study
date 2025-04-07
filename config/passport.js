@@ -5,7 +5,11 @@ const bcrypt = require('bcrypt');
 const { ObjectId } = require('mongodb');
 
 module.exports = (db) => {
-  passport.use(new LocalStrategy(async (userId, userPassword, done) => {
+  passport.use(new LocalStrategy({
+    usernameField: 'username',
+    passwordField: 'password'
+  }, 
+    async (userId, userPassword, done) => {
     try {
       const result = await db.collection('user').findOne({ username: userId });
       if (!result) return done(null, false, { message: '아이디 DB에 없음' });
