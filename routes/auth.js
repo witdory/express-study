@@ -12,8 +12,13 @@ const bcrypt = require('bcrypt')
 router.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false
-  }));
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000*60*60
+    }
+}));
 
 
 let db
@@ -53,6 +58,7 @@ router.get('/kakao/callback',(req, res, next)=>{
         if (!user) return res.redirect('/login');
 
         const redirectTo = req.session.redirectTo || '/auth/mypage';
+        //req.logIn하면서 req.session 객체가 부분만 갱신되는게 아니라 전체가 교체되기 때문에 미리 저장장
         delete req.session.redirectTo;
 
         req.logIn(user, (err) => {
