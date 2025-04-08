@@ -6,7 +6,7 @@ const client = new MongoClient(url);
 
 const connectDB = client.connect()
   .then(() => {
-    console.log("DB 연결 성공");
+    console.log("✅ DB 연결 성공");
     return client;
   })
   .catch((err) => {

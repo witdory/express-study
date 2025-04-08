@@ -41,7 +41,7 @@ app.use((req, res, next) => {
 
 const session = require('express-session')
 const passport = require('passport')
-const LocalStrategy = require('passport-local')
+// const LocalStrategy = require('passport-local')
 const MongoStore = require('connect-mongo')
 
 app.use(passport.initialize())
@@ -77,7 +77,7 @@ connectDB.then((client)=>{
 
 
   server.listen(8080, () => {
-    console.log('http://localhost:8080 에서 서버 실행중')
+    console.log('✅ http://localhost:8080 에서 서버 실행중')
 })
 }).catch((err)=>{
   console.log(err)
@@ -93,12 +93,6 @@ app.use((req, res, next) => {
 });
 
 app.get('/', async (req, res) => {
-  // res.sendFile(__dirname + '/index.html');
-  // await db.collection('user').updateMany(
-  //   { provider: { $exists: false } },
-  //   { $set: { provider: 'local' } }
-  // );
-  // console.log("업데이트성공")
   res.redirect('/post/list/1')
 }) 
 

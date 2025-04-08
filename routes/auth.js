@@ -105,7 +105,7 @@ router.post('/register',async (req, res)=>{
     const existId = await db.collection('user').findOne({username : req.body.username})
 
     if(existId){
-        console.log('아이디 중복')
+        console.log('아이디가 이미 존재.')
         res.redirect('/register')
     } 
     else if(req.body.password != req.body.confirmpassword){
@@ -118,6 +118,7 @@ router.post('/register',async (req, res)=>{
         await db.collection('user').insertOne({
         username: req.body.username,
         password: hash,
+        role: 'user',
         provider: 'local',
         createdAt: new Date()
         })

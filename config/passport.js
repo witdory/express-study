@@ -42,6 +42,7 @@ module.exports = (db) => {
         const kakaoId = profile.id;
         const username = profile.displayName || profile.username;
         const profileImage = profile.profile_image_url;
+        console.log(profile)
         // const email = profile._json?.kakao_account?.email
         let user = await db.collection('user').findOne({kakaoId});
 
@@ -50,6 +51,7 @@ module.exports = (db) => {
             kakaoId,
             username,
             profileImage,
+            role: 'user',
             provider: 'kakao',
             createdAt: new Date()
           }
