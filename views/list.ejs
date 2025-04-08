@@ -22,57 +22,58 @@
 
     </script> -->
 
-    <h5>전체 글</h5>
-    <div class="white-bg">
-        <%  for(let i = 0; i<posts.length; i++){ %>
-
-        <div class="list-box">
-            <h4>
-                <a href="/post/detail/<%=posts[i]._id %>">
-                    <%=posts[i].title%>
-                </a> 
-                <!-- <%if(posts[i].commentCount){%>
-                <span>  [<%=posts[i].commentCount%>] </span>
-                <%}%>
-                <span> 조회 <%=posts[i].viewCount%> </span>
-                 -->
-                <%if(posts[i].commentCount){%>
-
-                 <span>[<%= posts[i].commentCount %>]</span>
-                 <%}%>
-
-                 <% if (user && (posts[i].user?.toString() === user._id?.toString() || user.username === 'admin')) { %>
-                    <!-- 수정/삭제 버튼 표시 -->
-                    <a href="/post/edit/<%= posts[i]._id %>">✏️</a>
-                    <span class="delete" data-id="<%= posts[i]._id %>">🗑️</span>
-                  <% } %>
-                  
-                  
-                  
-                  
-            </h4>
-            <!-- <p><%=posts[i].content%></p> -->
-             
-                <div>
-                    <span style="font-size: 15px; color:grey"> <%=posts[i].username%></span>
-                    <span style="font-size: 15px; color:grey"> 조회 <%= posts[i].viewCount %></span>
+    
+    <div class="list-container">
+        <h5>전체 글</h5>
+    
+        <div class="white-bg">
+            <%  for(let i = 0; i<posts.length; i++){ %>
+    
+                <div class="list-box">
+                    <h4>
+                        <a href="/post/detail/<%=posts[i]._id %>">
+                            <%=posts[i].title%>
+                        </a> 
+                        
+                        <%if(posts[i].commentCount){%>
+    
+                        <span>[<%= posts[i].commentCount %>]</span>
+                        <%}%>
+    
+                        <% if (user && (posts[i].user?.toString() === user._id?.toString())) { %>
+                            <!-- 수정/삭제 버튼 표시 -->
+                            <a href="/post/edit/<%= posts[i]._id %>">✏️</a>
+                            <span class="delete" data-id="<%= posts[i]._id %>">🗑️</span>
+                        <% } %>
+                        
+                        
+                        
+                        
+                    </h4>
+                    <!-- <p><%=posts[i].content%></p> -->
+                    
+                        <div>
+                            <span style="font-size: 15px; color:grey"> <%=posts[i].username%></span>
+                            <span style="font-size: 15px; color:grey"> 조회 <%= posts[i].viewCount %></span>
+                        </div>
+                        
+                    
+                    
                 </div>
-                
-            
-            
-        </div>
-
-        <% } %>
-    </div> 
-    <div class="pagination" style="margin: 20px 0;">
-        <% for (let i = 1; i <= totalPages; i++) { %>
-          <% if (i === currentPage) { %>
-            <strong style="margin: 0 5px;"><%= i %></strong>
-          <% } else { %>
-            <a href="/post/list/<%= i %>" style="margin: 0 5px;"><%= i %></a>
-          <% } %>
-        <% } %>
-      </div>
+    
+            <% } %>
+        </div> 
+        <div class="pagination" style="margin: 20px 0;">
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <% if (i === currentPage) { %>
+                <strong style="margin: 0 5px;"><%= i %></strong>
+              <% } else { %>
+                <a href="/post/list/<%= i %>" style="margin: 0 5px;"><%= i %></a>
+              <% } %>
+            <% } %>
+          </div>
+    </div>
+    
       
       
 

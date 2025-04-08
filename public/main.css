@@ -13,14 +13,22 @@ body {
 .logo {
   font-weight: bold;
 }
+.list-container{
+  width: 80%;
+  margin: 30px auto 0px;
+  display:flex;
+  flex-direction:column;
+
+}
 
 .grey-bg {
   background: #eee;
 }
 .white-bg {
   background: white;
-  margin: 20px auto 0px;
+  /* margin: 20px auto 0px; */
   border-radius: 5px;
+
   
 }
 .list-box {

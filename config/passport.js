@@ -16,7 +16,7 @@ module.exports = (db) => {
         username: userId,
         provider:'local'
        });
-      if (!result) return done(null, false, { message: '아이디 DB에 없음' });
+      if (!result) return done(null, false, { message: '존재하지 않는 ID입니다.' });
       const match = await bcrypt.compare(userPassword, result.password);
       if (!match) return done(null, false, { message: '비밀번호 불일치' });
       
@@ -50,7 +50,7 @@ module.exports = (db) => {
             kakaoId,
             username,
             profileImage,
-            profider: 'kakao',
+            provider: 'kakao',
             createdAt: new Date()
           }
           const insertResult = await db.collection('user').insertOne(user);
