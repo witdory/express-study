@@ -26,17 +26,17 @@ app.set('view engine', 'ejs')
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-// server.js 상단, app.use(...)들 사이에 넣기!
-app.use((req, res, next) => {
-  console.log('✅ req.secure:', req.secure);
-  console.log('✅ x-forwarded-proto:', req.headers['x-forwarded-proto']);
-  console.log('✅ NODE_ENV:', process.env.NODE_ENV);
-  next();
-});
+
 
 
 app.set('trust proxy', 1);
-
+app.use((req, res, next) => {
+  // 개발 중에는 캐시 비활성화
+  if (process.env.NODE_ENV !== 'production') {
+    res.setHeader('Cache-Control', 'no-store');
+  }
+  next();
+});
 
 
 const session = require('express-session')
