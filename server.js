@@ -26,6 +26,15 @@ app.set('view engine', 'ejs')
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
+// server.js 상단, app.use(...)들 사이에 넣기!
+app.use((req, res, next) => {
+  console.log('✅ req.secure:', req.secure);
+  console.log('✅ x-forwarded-proto:', req.headers['x-forwarded-proto']);
+  console.log('✅ NODE_ENV:', process.env.NODE_ENV);
+  next();
+});
+
+
 app.set('trust proxy', 1);
 
 
