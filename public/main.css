@@ -50,8 +50,9 @@ input,div {
 }
 .form-box {
   background : white;
+  width: 50%;
   padding : 25px;
-  margin: 20px;
+  margin: 20px auto 0px;
   border-radius: 8px;
 }
 .form-box input {

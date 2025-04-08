@@ -3,13 +3,17 @@ const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
 const checkLogin = require('../middlewares/checkLogin'); // (checkLogin 미들웨어도 따로 파일로 분리)
-
+const session = require('express-session');
 require('dotenv').config()
 
 const passport = require('passport')
 const bcrypt = require('bcrypt')
 
-
+router.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+  }));
 
 
 let db
@@ -29,13 +33,34 @@ router.get('/login', async (req, res) => {
     res.render('login.ejs',{ redirect: req.query.redirect || '' })
   })  
 
-router.get('/kakao', passport.authenticate('kakao'))
-router.get('/kakao/callback',
-    passport.authenticate('kakao', {
-        failureRedirect: '/login',
-        successRedirect: '/auth/mypage'
-    })
-)
+router.get('/kakao', (req, res, next)=>{
+    if (req.query.redirect){
+        req.session.redirectTo = req.query.redirect
+    }
+    console.log('req.query: ')
+    console.log(req.query)
+    passport.authenticate('kakao')(req, res, next)
+    
+})
+router.get('/kakao/callback',(req, res, next)=>{
+    // passport.authenticate('kakao', {
+    //     failureRedirect: '/login',
+    //     successRedirect: '/auth/mypage'
+    // })
+    console.log(req.session)
+    passport.authenticate('kakao', (err, user, info)=>{
+        if (err) return next(err);
+        if (!user) return res.redirect('/login');
+
+        const redirectTo = req.session.redirectTo || '/auth/mypage';
+        delete req.session.redirectTo;
+
+        req.logIn(user, (err) => {
+            if (err) return next(err);
+            res.redirect(redirectTo);
+        });
+    })(req, res, next)
+})
   
 router.post('/login', async (req, res, next) => {
     passport.authenticate('local', (error, user, info)=>{
