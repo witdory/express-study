@@ -42,8 +42,8 @@ router.get('/kakao', (req, res, next)=>{
     if (req.query.redirect){
         req.session.redirectTo = req.query.redirect
     }
-    console.log('req.query: ')
-    console.log(req.query)
+    // console.log('req.query: ')
+    // console.log(req.query)
     passport.authenticate('kakao')(req, res, next)
     
 })
@@ -52,7 +52,7 @@ router.get('/kakao/callback',(req, res, next)=>{
     //     failureRedirect: '/login',
     //     successRedirect: '/auth/mypage'
     // })
-    console.log(req.session)
+    // console.log(req.session)
     passport.authenticate('kakao', (err, user, info)=>{
         if (err) return next(err);
         if (!user) return res.redirect('/login');

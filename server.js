@@ -37,10 +37,14 @@ const MongoStore = require('connect-mongo')
 
 app.use(passport.initialize())
 app.use(session({
-  secret: '비번',
+  secret: process.env.SESSION_SECRET,
   resave : false,
   saveUninitialized : false,
-  cookie : { maxAge : 7 * 24 * 60 * 60 * 1000},
+  cookie : { 
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge : 7 * 24 * 60 * 60 * 1000
+  },
   store : MongoStore.create({
     mongoUrl : process.env.DB_URL,
     dbName : 'forum'
@@ -94,76 +98,9 @@ app.use('/post',require('./routes/post.js'))
 app.use('/shop', require('./routes/shop.js'))
 app.use('/board', require('./routes/board.js'))
 app.use('/chat',require('./routes/chat.js'))
-
 app.use('/auth',require('./routes/auth.js'))
 
 
-
-
-
-
-// app.get('/login', async (req, res) => {
-//   // console.log(req.user)
-//   res.render('login.ejs',{ redirect: req.query.redirect || '' })
-// })  
-
-
-// app.post('/login', async (req, res, next) => {
-//   passport.authenticate('local', (error, user, info)=>{
-//     if(error) return res.status(500).json(error)
-//     if(!user) return res.status(401).json(info.message)
-
-//       req.logIn(user, (err) => {
-//         if (err) return next(err);
-//         // POST 요청에서는 req.body.redirect 사용
-//         const redirectUrl = req.body.redirect || '/';
-//         res.redirect(redirectUrl);
-//       });
-//   })(req, res, next)
-  
-// })  
-
-// app.get('/logout', (req, res, next) => {
-//   req.logout(function(err) {
-//     if (err) { return next(err); }
-//     res.redirect('/');  // 로그아웃 후 원하는 페이지로 리다이렉션
-//   });
-// });
-
-// app.get('/mypage', checkLogin, async (req, res) => {
-//   // console.log(req.user)
-//   res.render('mypage.ejs',{user: req.user})
-  
-// })  
-
-// app.get('/register',(req, res)=>{
-//   res.render('register.ejs')
-// })
-
-// app.post('/register',async (req, res)=>{
-
-//   const existId = await db.collection('user').findOne({username : req.body.username})
-
-//   if(existId){
-//     console.log('아이디 중복')
-//     res.redirect('/register')
-//   } 
-//   else if(req.body.password != req.body.confirmpassword){
-//     console.log('비밀번호 불일치')
-//     res.redirect('/register')
-//   }
-//   else{
-//     let hash = await bcrypt.hash(req.body.password,10)
-//     // console.log(hash)
-//     await db.collection('user').insertOne({
-//       username: req.body.username,
-//       password: hash
-//     })
-//     res.redirect('/list')
-//   }
-
-  
-// })
 
 
 
