@@ -41,7 +41,7 @@ module.exports = (db) => {
       try {
         const kakaoId = profile.id;
         const username = profile.displayName || profile.username;
-        const profileImage = profile.profile_image_url;
+        const profileImage = profile._json?.kakao_account?.profile?.profile_image_url || null;
         console.log(profile)
         // const email = profile._json?.kakao_account?.email
         let user = await db.collection('user').findOne({kakaoId});
