@@ -9,16 +9,17 @@ require('dotenv').config()
 const passport = require('passport')
 const bcrypt = require('bcrypt')
 
-router.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 1000*60*60
-    }
-}));
+// router.use(session({
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//         httpOnly: true,
+//         secure: process.env.NODE_ENV === 'production',
+//         maxAge: 1000*60*60
+//     }
+// }));
+
 
 
 let db

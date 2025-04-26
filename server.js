@@ -44,7 +44,6 @@ const passport = require('passport')
 // const LocalStrategy = require('passport-local')
 const MongoStore = require('connect-mongo')
 
-app.use(passport.initialize())
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave : false,
@@ -59,6 +58,7 @@ app.use(session({
     dbName : 'forum'
   })
 }))
+app.use(passport.initialize())
 
 app.use(passport.session()) 
 

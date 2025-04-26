@@ -2,6 +2,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const KakaoStrategy = require('passport-kakao').Strategy;
+const NaverStrategy = require('passport-naver-v2').Strategy;
 const bcrypt = require('bcrypt');
 const { ObjectId } = require('mongodb');
 
@@ -42,7 +43,8 @@ module.exports = (db) => {
         const kakaoId = profile.id;
         const username = profile.displayName || profile.username;
         const profileImage = profile._json?.kakao_account?.profile?.profile_image_url || null;
-        console.log(profile)
+        // console.log(profile)
+        // console.log(profileImage)
         // const email = profile._json?.kakao_account?.email
         let user = await db.collection('user').findOne({kakaoId});
 
@@ -58,12 +60,60 @@ module.exports = (db) => {
           const insertResult = await db.collection('user').insertOne(user);
           user._id = insertResult.insertedId
         }
+        else{
+          await db.collection('user').updateOne(
+            {_id : user._id},
+            {$set: {username, profileImage}}
+          );
+        }
         return done(null, user);
       } catch(err){
         return done(err);
       }
     }
   ))
+
+  // const naverClientID = process.env.NAVER_CLIENT_ID;
+  // const naverClientSecret = process.env.NAVER_CLIENT_SECRET;
+  // const naverCallbackURL = process.env.NAVER_CALLBACK_URL;
+
+  // passport.use(new NaverStrategy({
+  //   clientID: naverClientID,
+  //   clientSecret: naverClientSecret,
+  //   callbackURL: naverCallbackURL,
+  // },
+  // async (accessToken, refreshToken, profile, done) => {
+  //     try {
+  //         // profile에는 네이버에서 받은 사용자 정보가 담겨있음
+  //         const naverId = profile.id;
+  //         const username = profile.displayName || profile.username;
+  //         const email = profile.emails?.[0]?.value || null;
+  //         const profileImage = profile.profileImage || null;  // profileImage 필드가 추가되어 있음
+
+  //         // DB에 유저 있는지 찾기
+  //         let user = await db.collection('user').findOne({ naverId });
+
+  //         // 없으면 새로 생성
+  //         if (!user) {
+  //             user = {
+  //                 naverId,
+  //                 username,
+  //                 email,
+  //                 profileImage,
+  //                 role: 'user',
+  //                 provider: 'naver',
+  //                 createdAt: new Date()
+  //             };
+  //             const insertResult = await db.collection('user').insertOne(user);
+  //             user._id = insertResult.insertedId;
+  //         }
+
+  //         // 성공
+  //         return done(null, user);
+  //     } catch (err) {
+  //         return done(err);
+  //     }
+  // }));
 
   passport.serializeUser((user, done) => {
     process.nextTick(() => {
