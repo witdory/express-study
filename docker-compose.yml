@@ -20,8 +20,8 @@ services:
       - "443:443"
     # 호스트의 기존 Nginx 설정·인증서를 그대로 사용
     volumes:
-      - /nginx/sites-available:/etc/nginx/sites-available:ro
-      - /nginx/sites-enabled:/etc/nginx/sites-enabled:ro
+      - ./nginx/sites-available:/etc/nginx/sites-available:ro
+      - ./nginx/sites-enabled:/etc/nginx/sites-enabled:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - backend
