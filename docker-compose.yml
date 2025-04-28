@@ -1,0 +1,28 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+
+  backend:
+    build: .
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - "8080"
+    depends_on:
+      - redis
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    # 호스트의 기존 Nginx 설정·인증서를 그대로 사용
+    volumes:
+      - /nginx/sites-available:/etc/nginx/sites-available:ro
+      - /nginx/sites-enabled:/etc/nginx/sites-enabled:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - backend
