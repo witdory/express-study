@@ -57,7 +57,7 @@ router.get('/kakao/callback',(req, res, next)=>{
     passport.authenticate('kakao', (err, user, info)=>{
         if (err) return next(err);
         if (!user) return res.redirect('/login');
-
+        console.log('세션 전체 :' ,req.session)
         const redirectTo = req.session.redirectTo || '/auth/mypage';
         //req.logIn하면서 req.session 객체가 부분만 갱신되는게 아니라 전체가 교체되기 때문에 미리 저장장
         delete req.session.redirectTo;

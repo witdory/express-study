@@ -1,6 +1,19 @@
 // server.js
 const express = require('express')
 const app = express()
+
+// const session = require('express-session');
+const {RedisStore} = require('connect-redis')// 최신 버전은 default import
+const redis = require('redis');
+
+const client = redis.createClient({
+  url: 'redis://redis:6379'
+});
+
+client.connect().then(() => {
+  console.log('✅ Redis 연결 완료');
+}).catch(console.error);
+
 const { MongoClient, ObjectId } = require('mongodb')
 const methodOverride = require('method-override')
 const bcrypt = require('bcrypt')
@@ -8,7 +21,7 @@ const bcrypt = require('bcrypt')
 const { createServer } = require('http')
 const { Server } = require('socket.io')
 const server = createServer(app)
-const io = new Server(server) 
+const io = new Server(server)
 
 const morgan = require('morgan');
 const fs = require('fs');
@@ -44,6 +57,21 @@ const passport = require('passport')
 // const LocalStrategy = require('passport-local')
 const MongoStore = require('connect-mongo')
 
+// app.use(session({
+//   secret: process.env.SESSION_SECRET,
+//   resave : false,
+//   saveUninitialized : false,
+//   cookie : { 
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV === 'production',
+//     maxAge : 7 * 24 * 60 * 60 * 1000
+//   },
+//   store : MongoStore.create({
+//     mongoUrl : process.env.DB_URL,
+//     dbName : 'forum'
+//   })
+// }))
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave : false,
@@ -53,11 +81,11 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production',
     maxAge : 7 * 24 * 60 * 60 * 1000
   },
-  store : MongoStore.create({
-    mongoUrl : process.env.DB_URL,
-    dbName : 'forum'
+  store : new RedisStore({
+    client:client
   })
 }))
+
 app.use(passport.initialize())
 
 app.use(passport.session()) 
