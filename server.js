@@ -1,6 +1,26 @@
 // server.js
 const express = require('express')
 const app = express()
+
+// const session = require('express-session');
+const {RedisStore} = require('connect-redis')// 최신 버전은 default import
+const redis = require('redis');
+
+const isProd = process.env.NODE_ENV === 'production';
+
+// ① 운영(컨테이너 ↔ 컨테이너) ─ 컨테이너 DNS 이름
+// ② 개발(호스트 ↔ 컨테이너)  ─ localhost:6379 로 바인딩
+const redisUrl = isProd
+  ? 'redis://redis:6379'
+  : 'redis://localhost:6379'; // Linux Docker Desktop이면 host.docker.internal 도 가능
+const client = redis.createClient({
+  url: redisUrl
+});
+
+client.connect().then(() => {
+  console.log('✅ Redis 연결 완료');
+}).catch(console.error);
+
 const { MongoClient, ObjectId } = require('mongodb')
 const methodOverride = require('method-override')
 const bcrypt = require('bcrypt')
@@ -8,7 +28,7 @@ const bcrypt = require('bcrypt')
 const { createServer } = require('http')
 const { Server } = require('socket.io')
 const server = createServer(app)
-const io = new Server(server) 
+const io = new Server(server)
 
 const morgan = require('morgan');
 const fs = require('fs');
@@ -44,6 +64,21 @@ const passport = require('passport')
 // const LocalStrategy = require('passport-local')
 const MongoStore = require('connect-mongo')
 
+// app.use(session({
+//   secret: process.env.SESSION_SECRET,
+//   resave : false,
+//   saveUninitialized : false,
+//   cookie : { 
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV === 'production',
+//     maxAge : 7 * 24 * 60 * 60 * 1000
+//   },
+//   store : MongoStore.create({
+//     mongoUrl : process.env.DB_URL,
+//     dbName : 'forum'
+//   })
+// }))
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave : false,
@@ -53,11 +88,11 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production',
     maxAge : 7 * 24 * 60 * 60 * 1000
   },
-  store : MongoStore.create({
-    mongoUrl : process.env.DB_URL,
-    dbName : 'forum'
+  store : new RedisStore({
+    client:client
   })
 }))
+
 app.use(passport.initialize())
 
 app.use(passport.session()) 
