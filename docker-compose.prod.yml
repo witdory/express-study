@@ -10,7 +10,7 @@ x-deploy-default: &deploy-default
 services:
   # ────────── Backend ──────────
   backend:
-    image: yoonjaeko/express-backend:1.02
+    image: yoonjaeko/express-backend:1.04
     env_file: .env
     expose: ["8080"]
     depends_on:
