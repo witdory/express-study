@@ -1,4 +1,13 @@
 version: "3.9"
+#개발환경에서 실행할때는 redis만 실행 -> docker compose up -d --build
+#운영환경에서 실행할때는 다 실행 -> docker compose --profile prod up -d --build
+
+x-deploy-default: &deploy-default
+  restart_policy: {condition: on-failure}
+  update_config:
+    order: start-first     # 무중단
+    parallelism: 1
+    delay: 10s
 
 services:
   # ────────────── 개발·운영 공통 ──────────────
@@ -7,22 +16,27 @@ services:
     container_name: redis
     ports:
       - "6379:6379"        # 호스트에도 그대로 노출
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       retries: 3
+    deploy: {<<: *deploy-default, replicas: 1}
 
   # ────────────── 운영 전용(backend) ──────────────
   backend:
     build: .
+    image: yoonjaeko/express-backend:1.0
     container_name: express-backend
     env_file: .env
     expose:
       - "8080"
+    restart: unless-stopped
     depends_on:
       redis:
         condition: service_healthy
     profiles: ["prod"]     # ★ prod 프로파일에만 포함
+    deploy: {<<: *deploy-default, replicas: 3}
 
   # ────────────── 운영 전용(nginx) ──────────────
   nginx:
@@ -36,7 +50,9 @@ services:
       - ./nginx/sites-available:/etc/nginx/sites-available:ro
       - ./nginx/sites-enabled:/etc/nginx/sites-enabled:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
+    restart: unless-stopped
     depends_on:
       backend:
         condition: service_started
     profiles: ["prod"]     # ★ prod 프로파일에만 포함
+    deploy: {<<: *deploy-default, replicas: 2}
