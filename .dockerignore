@@ -1,5 +1,11 @@
 node_modules
+<<<<<<< HEAD
 npm-debug.log
 .env
 Dockerfile
 docker-compose.yml
+=======
+Dockerfile
+.dockerignore
+.env
+>>>>>>> dockerize
