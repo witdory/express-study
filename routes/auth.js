@@ -107,11 +107,11 @@ router.post('/register',async (req, res)=>{
 
     if(existId){
         console.log('아이디가 이미 존재.')
-        res.redirect('/register')
+        res.redirect('/auth/register')
     } 
     else if(req.body.password != req.body.confirmpassword){
         console.log('비밀번호 불일치')
-        res.redirect('/register')
+        res.redirect('/auth/register')
     }
     else{
         let hash = await bcrypt.hash(req.body.password,10)
