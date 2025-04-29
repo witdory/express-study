@@ -140,7 +140,9 @@ app.use('/auth',require('./routes/auth.js'))
 
 
 
-
+app.get('/health', (req, res) => {
+  res.sendStatus(200);
+});
 
 app.get('/search', async (req, res)=>{
   let page = parseInt(req.params.page) || 1;
