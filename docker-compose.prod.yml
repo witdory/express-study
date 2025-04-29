@@ -16,7 +16,7 @@ services:
     depends_on:
       - redis
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "wget", "--spider", "--quiet", "http://localhost:8080/health"]
       interval: 30s
       retries: 3
     deploy: {<<: *deploy-default, replicas: 3}
