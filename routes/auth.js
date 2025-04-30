@@ -84,12 +84,33 @@ router.post('/login', async (req, res, next) => {
 
 })  
 
+// router.get('/logout', (req, res, next) => {
+//     req.logout(function(err) {
+//         if (err) { return next(err); }
+//         res.redirect('/');  // 로그아웃 후 원하는 페이지로 리다이렉션
+//     });
+// });
+
 router.get('/logout', (req, res, next) => {
-    req.logout(function(err) {
-        if (err) { return next(err); }
-        res.redirect('/');  // 로그아웃 후 원하는 페이지로 리다이렉션
+    req.logout(err => {
+      if (err) { 
+        return next(err); 
+      }
+  
+      // 세션 스토어(=Redis)에서 세션 삭제
+      req.session.destroy(err => {
+        if (err) { 
+          return next(err); 
+        }
+  
+        // 브라우저에 남아 있는 세션 쿠키 제거
+        res.clearCookie('connect.sid', { path: '/' });
+  
+        // 로그아웃 완료 후 리다이렉트
+        res.redirect('/');
+      });
     });
-});
+  });
 
 router.get('/mypage', checkLogin, async (req, res) => {
     // console.log(req.user)
