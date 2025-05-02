@@ -10,7 +10,7 @@ x-deploy-default: &deploy-default
 services:
   # ────────── Backend ──────────
   backend:
-    image: yoonjaeko/express-backend:latest
+    image: yoonjaeko/express-backend:1.06
     env_file: .env
     expose: ["8080"]
     depends_on:
@@ -31,11 +31,11 @@ services:
       - ./nginx/sites-enabled:/etc/nginx/sites-enabled:ro
     secrets:
       - source: mystack_fullchain
-        target: /etc/letsencrypt/live/mystack/fullchain.pem
+        target: /run/secrets/fullchain.pem
         mode: 0444
       - source: mystack_privkey
-        target: /etc/letsencrypt/live/mystack/privkey.pem
-        mode: 0444
+        target: /run/secrets/privkey.pem
+        mode: 0400
     depends_on:
       - backend
     deploy: {<<: *deploy-default, replicas: 2}

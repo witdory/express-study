@@ -7,8 +7,8 @@ server {
 server {
   listen 443 ssl;
   server_name seolgu.kr;
-  ssl_certificate /etc/letsencrypt/live/www.seolgu.kr/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/www.seolgu.kr/privkey.pem;
+  ssl_certificate /run/secrets/fullchain.pem;
+  ssl_certificate_key /run/secrets/privkey.pem;
   return 301 https://www.seolgu.kr$request_uri;
 }
 
@@ -24,8 +24,8 @@ server {
   listen 443 ssl;
   server_name www.seolgu.kr;
 
-  ssl_certificate /etc/letsencrypt/live/www.seolgu.kr/fullchain.pem;
-  ssl_certificate_key /etc/letsencrypt/live/www.seolgu.kr/privkey.pem;
+  ssl_certificate /run/secrets/fullchain.pem;
+  ssl_certificate_key /run/secrets/privkey.pem;
 
   location / {
     proxy_pass http://backend:8080;
