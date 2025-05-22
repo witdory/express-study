@@ -14,7 +14,7 @@ jobs:
       STACK_NAME: mystack
       SSH_HOST: ${{ secrets.SSH_HOST }}
       SSH_USER: raspi      # ← SSH 사용자명 raspi
-      SSH_KEY: ${{ secrets.SSH_KEY }}
+      SSH_KEY: ${{ secrets.SSH_PASSWORD }}
 
     steps:
       - name: Checkout code
