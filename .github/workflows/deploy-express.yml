@@ -44,7 +44,7 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ env.SSH_HOST }}
-          SSH_PORT: ${{ secrets.SSH_PORT }} 
+          port: ${{ secrets.SSH_PORT }} 
           username: ${{ env.SSH_USER }}
           key: ${{ env.SSH_KEY }}
           script: |
