@@ -41,7 +41,7 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
       - name: Update only Express Backend service
-        uses: appleboy/ssh-action@v0.7.4
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ env.SSH_HOST }}
           username: ${{ env.SSH_USER }}
