@@ -11,7 +11,7 @@ const isProd = process.env.NODE_ENV === 'production';
 // ① 운영(컨테이너 ↔ 컨테이너) ─ 컨테이너 DNS 이름
 // ② 개발(호스트 ↔ 컨테이너)  ─ localhost:6379 로 바인딩
 const redisUrl = isProd
-  ? 'redis://redis:6379'
+  ? 'redis://mystack_redis:6379'
   : 'redis://localhost:6379'; // Linux Docker Desktop이면 host.docker.internal 도 가능
 const client = redis.createClient({
   url: redisUrl
