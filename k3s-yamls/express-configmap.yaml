@@ -4,4 +4,4 @@ metadata:
   name: express-env
   namespace: mystack
 data:
-  NODE_ENV: "production"
+  NODE_ENV: "k3s"
