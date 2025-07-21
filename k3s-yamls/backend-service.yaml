@@ -12,5 +12,4 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-      nodePort: 30080    # 외부(로컬)에서 접속할 포트 (30000~32767 사이)
-  type: NodePort
+  type: ClusterIP
