@@ -24,7 +24,8 @@
                                 </a>
                                 
                                 <%if(posts[i].commentCount){%>
-                                    <span class="badge bg-info">[<%= posts[i].commentCount %>]</span>
+                                    <!-- <span class="badge bg-secondary">[<%= posts[i].commentCount %>]</span> -->
+                                     <span style="color:red">[<%= posts[i].commentCount %>]</span>
                                 <%}%>
                             </h4>
                             
@@ -45,7 +46,9 @@
                 <% } %>
             </div>
             
-            <% if (totalPages > 1) { %>
+            
+        </div>
+        <% if (totalPages > 1) { %>
                 <div class="pagination">
                     <% for (let i = 1; i <= totalPages; i++) { %>
                         <% if (i === currentPage) { %>
@@ -56,7 +59,6 @@
                     <% } %>
                 </div>
             <% } %>
-        </div>
     </div>
 
     <script>

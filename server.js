@@ -21,7 +21,6 @@ if (process.env.NODE_ENV === 'production') {
 
 console.log('🔍 Using Redis URL:', redisUrl);
 
-// ✅ 핵심 수정: legacyMode 추가
 const redisClient = redis.createClient({ 
   url: redisUrl,
 });
