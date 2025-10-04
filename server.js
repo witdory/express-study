@@ -24,26 +24,11 @@ console.log('🔍 Using Redis URL:', redisUrl);
 // ✅ 핵심 수정: legacyMode 추가
 const redisClient = redis.createClient({ 
   url: redisUrl,
-  legacyMode: true  // ⭐️ 이것이 핵심!
 });
 
 redisClient.on('error', (err) => {
   console.error('❌ Redis 에러:', err);
 });
-
-// ✅ 연결 방식 개선
-redisClient.connect()
-  .then(() => {
-    console.log('✅ Redis 연결 완료');
-    // 연결 테스트
-    return redisClient.ping();
-  })
-  .then((result) => {
-    console.log('✅ Redis PING:', result);
-  })
-  .catch((err) => {
-    console.error('❌ Redis 연결 실패:', err);
-  });
 
 // — HTTP 서버 & Socket.io — 
 const { createServer } = require('http')
@@ -66,18 +51,29 @@ app.use(express.urlencoded({ extended: true }))
 app.set('trust proxy', 1)                                      
 
 // — 세션 & Passport 미들웨어 — 
-app.use(session({
+let sessionConfig = {
   secret: process.env.SESSION_SECRET,                        
   resave: false,
   saveUninitialized: false,
-  store: new RedisStore({ client: redisClient }),
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',             
     sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000
   }
-}))
+}
+
+// Redis 연결이 완료되면 세션 스토어 업데이트
+redisClient.connect()
+  .then(() => {
+    console.log('✅ Redis 연결 완료, 세션 스토어 업데이트');
+    sessionConfig.store = new RedisStore({ client: redisClient });
+  })
+  .catch((err) => {
+    console.log('⚠️ Redis 연결 실패, 메모리 세션 스토어 사용:', err.message);
+  });
+
+app.use(session(sessionConfig))
 app.use(passport.initialize())
 app.use(passport.session())
 
