@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>글 수정 - Seol9u</title>
     <link href="/main.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body class="grey-bg">
+<body>
     <%- include('nav.ejs')%>
     
-    <form class="form-box" action="/edit/<%=post._id%>" method="post">
-        <h4>글 수정</h4>
-        <input type="text" name="title" value="<%= post.title%>">
-        <input type="text" name="content" value="<%= post.content%>">
-        <button type="submit">저장</button>
-    </form> 
-    
+    <div class="container">
+        <form class="form-box" action="/edit/<%=post._id%>" method="post">
+            <h4>글 수정</h4>
+            <input type="text" name="title" value="<%= post.title%>" required>
+            <textarea name="content" rows="10" required><%= post.content%></textarea>
+            <button type="submit">저장</button>
+            <a href="/post/detail/<%=post._id%>" class="btn">취소</a>
+        </form>
+    </div>
 </body>
-
 </html>

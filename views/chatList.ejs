@@ -1,35 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>채팅방 목록 - Seol9u</title>
     <link href="/main.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="grey-bg">
+<body>
     <%- include('nav.ejs')%>
 
-    
-
-    <div class="white-bg">
-        <%  for(let i = 0; i<rooms.length; i++){ %>
-
-        <div class="list-box">
-            <h4>
-                <a href="/chat/detail/<%=rooms[i]._id%>"><%=rooms[i].roomName%></a>
-            </h4>
-             
-            <p>채팅방설명~~</p>
-            
+    <div class="container">
+        <div class="list-container">
+            <h5>채팅방 목록</h5>
+        
+            <div class="white-bg">
+                <% for(let i = 0; i < rooms.length; i++){ %>
+                    <div class="list-box">
+                        <h4>
+                            <a href="/chat/detail/<%=rooms[i]._id%>"><%=rooms[i].roomName%></a>
+                        </h4>
+                        <p>채팅방에 참여하여 대화를 시작하세요</p>
+                    </div>
+                <% } %>
+            </div>
         </div>
-
-        <% } %>
-    </div> 
-    
-
-    
+    </div>
 </body>
 </html>

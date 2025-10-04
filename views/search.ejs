@@ -1,76 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>"<%= value %>" 검색결과 - Seol9u</title>
     <link href="/main.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="grey-bg">
+<body>
     <%- include('nav.ejs')%>
 
-    <!-- <input class="search">
-    <button class="search-send">검색</button>
-    <script>
-        document.querySelector('.search-send').addEventListener('click', function(){
-            let inputData = document.querySelector('.search').value
-            location.href = '/search?val=' + inputData
-        })
-    </script> -->
-
-    <h4><%= value %>에 대한 검색결과</h4>
-
-    <div class="white-bg">
-        <%  for(let i = 0; i<posts.length; i++){ %>
-
-        <div class="list-box">
-            <h4>
-                <a href="/detail/<%=posts[i]._id %>">
-                    <%=posts[i].title%>
-                </a>
-                <% if (user && posts[i].user && posts[i].user.toString() == user._id.toString()) { %>
-                    <a href="/edit/<%=posts[i]._id %>">✏️</a>
-                    <span class="delete" data-id="<%=posts[i]._id%>">🗑️</span>
-                <% } %>
-            </h4>
-            <p><%=posts[i].content%></p>
-        </div>
-
-        <% } %>
-    </div> 
-    <!-- <% if (posts && posts.length > 0 && posts[posts.length - 1]) { %>
-        <a href="/api/list/next/<%= posts[posts.length-1]._id %>">다음</a>
-      <% } %> -->
-      <div class="pagination" style="margin: 20px 0;">
-        <% for (let i = 1; i <= totalPages; i++) { %>
-          <% if (i === currentPage) { %>
-            <strong style="margin: 0 5px;"><%= i %></strong>
-          <% } else { %>
-            <a href="/post/list/<%= i %>" style="margin: 0 5px;"><%= i %></a>
-          <% } %>
-        <% } %>
-      </div>
-
-    <script>
+    <div class="container">
+        <div class="list-container">
+            <h5>"<%= value %>" 검색결과</h5>
         
+            <div class="white-bg">
+                <% for(let i = 0; i < posts.length; i++){ %>
+                    <div class="list-box">
+                        <div class="list-header">
+                            <h4>
+                                <a href="/post/detail/<%=posts[i]._id %>">
+                                    <%=posts[i].title%>
+                                </a>
+                            </h4>
+                            
+                            <% if (user && posts[i].user && posts[i].user.toString() == user._id.toString()) { %>
+                                <div class="action-buttons">
+                                    <a href="/post/edit/<%=posts[i]._id %>">수정</a>
+                                    <span class="delete" data-id="<%=posts[i]._id%>">삭제</span>
+                                </div>
+                            <% } %>
+                        </div>
+                        
+                        <p><%=posts[i].content%></p>
+                        
+                        <div class="meta-info">
+                            <span><%=posts[i].username%></span>
+                            <span>조회 <%= posts[i].viewCount || 0 %></span>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+            
+            <% if (totalPages > 1) { %>
+                <div class="pagination">
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <% if (i === currentPage) { %>
+                            <strong><%= i %></strong>
+                        <% } else { %>
+                            <a href="/search?val=<%= value %>&page=<%= i %>"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
         document.querySelectorAll('.delete').forEach((button)=>{
             button.addEventListener('click', (e)=>{
-                fetch('/api/posts?postid=' + e.currentTarget.dataset.id, {
-                    method : 'DELETE',
-                })
-                .then((r)=>r.text())
-                .then((r)=>{
-                    e.target.parentElement.parentElement.style.display = 'none'
-                })
+                if(confirm('정말 삭제하시겠습니까?')) {
+                    fetch('/post/api/posts?postid=' + e.currentTarget.dataset.id, {
+                        method : 'DELETE',
+                    })
+                    .then((r)=>r.text())
+                    .then((r)=>{
+                        e.target.parentElement.parentElement.style.display = 'none'
+                    })
+                }
             })
         })
-        
-        
-
     </script>
-    
 </body>
 </html>

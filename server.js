@@ -18,7 +18,7 @@ const client = redis.createClient({
 });
 
 client.connect().then(() => {
-  console.log('✅ Redis 연결 완료');
+  console.log('✅ Redis 연결 성공');
 }).catch(console.error);
 
 const { MongoClient, ObjectId } = require('mongodb')
