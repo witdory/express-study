@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-backend-svc
+  namespace: mystack
+  labels:
+    app: express-backend
+spec:
+  selector:
+    app: express-backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: express-env
+  namespace: mystack
+data:
+  NODE_ENV: "k3s"
